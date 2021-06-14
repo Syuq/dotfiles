@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# 1: left click
+# 2: middle click
+# 3: right click
+# 4: scroll up
+# 5: scroll down
+# 6: Shift + left click
+case $BUTTON in
+	1) "$TERMINAL" -e "$(which bashtop && echo bashtop || echo htop)" ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+read cpu a b c previdle rest < /proc/stat
+prevtotal=$((a+b+c+previdle))
+sleep 0.5
+read cpu a b c idle rest < /proc/stat
+total=$((a+b+c+idle))
+cpu=$((100*( (total-prevtotal) - (idle-previdle) ) / (total-prevtotal) ))
+
+printf " $cpu%%"
+
+exit 0

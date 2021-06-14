@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# This script needs dmenu to work
+
+[ $EUID -eq 0 ] && echo "Do not run this script as root." && exit 1
+
+dmenu -P -p "$1" <&- && echo
+
+exit 0

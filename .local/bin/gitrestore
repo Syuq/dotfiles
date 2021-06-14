@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# You don't need this script if you're not me =))
+
+[ $EUID -eq 0 ] && echo "Do not run this script as root." && exit
+
+ssh-keygen -t rsa -b 4096 -C "syaorancode@gmail.com"
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa
+
+xclip -se c < ~/.ssh/id_rsa.pub
+echo -e "Your ssh public key has been copied to system clipboard.\nPlease add your public key to your github/gitlab. Press Enter when you're done."
+read -r
+
+repodir="$HOME/user/works/repos"
+
+rm -rf "$repodir"/*
+
+git clone git@gitlab.com:justanoobcoder/SARS.git "$repodir"/SARS
+git clone git@gitlab.com:justanoobcoder/SALI.git "$repodir"/SALI
+git clone git@gitlab.com:justanoobcoder/dwm.git "$repodir"/dwm
+git clone git@gitlab.com:justanoobcoder/dwmblocks.git "$repodir"/dwmblocks
+git clone git@gitlab.com:justanoobcoder/st.git "$repodir"/st
+git clone git@gitlab.com:justanoobcoder/dmenu.git "$repodir"/dmenu
+git clone git@gitlab.com:justanoobcoder/gentoo-overlay.git "$repodir"/gentoo-overlay
+git clone git@github.com:justanoobcoder/code.git "$repodir"/code
+git clone git@github.com:justanoobcoder/nowater.git "$repodir"/nowater
+
+cd "$repodir"/dwm
+git checkout develop
+cd "$repodir"/nowater
+git checkout dev
+
+cd
+mkdir ~/.config/git
+touch ~/.config/git/config
+git config --global user.email "syaorancode@gmail.com"
+git config --global user.name "justanoobcoder"
+git config --global pager.branch false
+git config --local status.showUntrackedFiles no
+git remote set-url origin git@gitlab.com:justanoobcoder/dotfiles.git

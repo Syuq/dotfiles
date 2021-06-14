@@ -1,0 +1,23 @@
+#!/bin/bash
+
+script="$1"
+permission="$2"
+
+[ -f "$script" ] && "$EDITOR" "$script" && exit 0
+
+touch "$script"
+chmod +x "$script"
+
+echo "#!/bin/bash
+
+error() { echo -e \"\$1\" && exit; }
+" >> "$script"
+{ [ "$permission" = "r" ] && echo '[ $EUID -ne 0 ] && error "Permission denied!\nRun this script as root."' >> $script; } || echo '[ $EUID -eq 0 ] && error "Do not run this script as root."' >> "$script"
+echo "
+
+
+exit 0" >> "$script"
+
+"$EDITOR" "$script"
+
+exit 0

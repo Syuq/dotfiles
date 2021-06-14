@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# This script needs wps, sxiv, mpv to work
+
+[ $EUID -eq 0 ] && echo "Do not run this script as root." && exit 1
+
+filename=$1
+[ -f "$filename" ] || { echo "No such file." ; exit ; }
+ext="${filename##*.}"
+
+case "$ext" in
+    "pdf")
+        wpspdf "$filename" ;;
+    "doc" | "docx")
+        wps "$filename" ;;
+    "ppt" | "pptx")
+        wpp "$filename" ;;
+    "xlsx" | "xls" | "csv")
+        et "$filename" ;;
+    "mp4" | "mkv" | "mp3")
+        mpv "$filename" ;;
+    "jpg" | "jpeg" | "png" | "gif")
+        sxiv "$filename" ;;
+	"html")
+		"$BROWSER" "$filename" ;;
+    *)
+        echo "Cannot open this file."
+esac
+
+exit 0

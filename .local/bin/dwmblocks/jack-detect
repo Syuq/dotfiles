@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# This script needs dunstify to work
+
+[ $EUID -eq 0 ] && echo 'Do not run this script as root.' && exit
+
+dir="$HOME/.cache/dwmblocks"
+file="$dir/jack_listen.log"
+[ -d "$dir" ] || mkdir -p "$dir"
+[ -f "$file" ] || echo "empty" > "$file"
+
+while :; do
+	pre_status="$(< $file)"
+	cur_status="$(grep "Pin-ctls" /proc/asound/card0/codec\#0 | sed -n 2p | awk '{print $3}')"
+	[ "$pre_status" != "$cur_status" ] && pkill -RTMIN+5 dwmblocks && echo "$cur_status" > $file &&
+	[ -z "$cur_status" ] && dunstify -i audio-headset-symbolic.symbolic -r 1 -u normal 'Headphone plugged in!'
+	sleep 1s
+done
+
+exit 0

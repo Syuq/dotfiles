@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# This script needs pavucontrol and changeVolume script to work
+
+# 1: left click
+# 2: middle click
+# 3: right click
+# 4: scroll up
+# 5: scroll down
+# 6: Shift + left click
+case $BUTTON in
+	1) pavucontrol ;; 	# Install pavucontrol first to use this
+	2) changeVolume toggle && pkill -RTMIN+5 dwmblocks ;;
+	4) changeVolume 5%+ >/dev/null 2>/dev/null ;;
+	5) changeVolume 5%- >/dev/null 2>/dev/null ;;
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+volstat="$(amixer sget Master)"
+
+echo "$volstat" | grep "\[off\]" >/dev/null && printf "🔇\\n" && exit
+
+vol=$(echo "$volstat" | grep -o "\[[0-9]\+%\]" | sed "s/[^0-9]*//g;1q")
+
+if [ "$vol" -gt "70" ]; then
+	icon="🔊"
+elif [ "$vol" -lt "30" ]; then
+	icon="🔈"
+else
+	icon="🔉"
+fi
+
+[ "$(grep "Pin-ctls" /proc/asound/card0/codec\#0 | sed -n 2p | cut -d ' ' -f 5)" != "OUT" ] && icon="🎧"
+
+printf "$icon $vol%%"

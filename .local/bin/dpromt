@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# This script needs dmenu to work
+
+[ "$1" = "--default" ] && str="Are you sure?" || str="$1"
+
+[ "$(printf "No\\nYes" | dmenu -p "$str" -nb darkred -sb red -sf white -nf gray )" = "Yes" ] && $2

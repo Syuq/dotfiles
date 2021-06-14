@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# 1: left click
+# 2: middle click
+# 3: right click
+# 4: scroll up
+# 5: scroll down
+# 6: Shift + left click
+case $BUTTON in
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+for battery in /sys/class/power_supply/BAT?
+do
+	capacity=$(cat "$battery"/capacity) || break
+
+    case "$(cat "$battery"/status)" in
+		[Dd]"ischarging" | [Cc]"harging")
+			if [ $capacity -lt 10 ]; then
+				status=""
+				icon="❗"
+			elif [ $capacity -lt 20 ] && [ $capacity -ge 10 ]; then
+				status=""
+				icon="❗"
+				dunstify -i battery-level-20-symbolic.symbolic -r 1234 -u critical 'Low battery!'
+			elif [ $capacity -lt 30 ] && [ $capacity -ge 20 ]; then
+				status=""
+			elif [ $capacity -lt 40 ] && [ $capacity -ge 30 ]; then
+				status=""
+			elif [ $capacity -lt 50 ] && [ $capacity -ge 40 ]; then
+				status=""
+			elif [ $capacity -lt 60 ] && [ $capacity -ge 50 ]; then
+				status=""
+			elif [ $capacity -lt 70 ] && [ $capacity -ge 60 ]; then
+				status=""
+			elif [ $capacity -lt 80 ] && [ $capacity -ge 70 ]; then
+				status=""
+			elif [ $capacity -lt 90 ] && [ $capacity -ge 80 ]; then
+				status=""
+			else
+				status=""
+			fi
+
+			if [[ "$(cat "$battery"/status)" = [Cc]"harging" ]]; then
+				icon="⚡"
+			fi
+			;;
+		[Ff]"ull")
+			status=""
+			;;
+		[Uu]"nknown")
+			status=""
+			;;
+	esac
+
+    # Sometimes capacity is greater than 100, I don't know why but let's fix this
+    [ $capacity -gt 100 ] && capacity=100
+
+	printf "$status$icon $capacity%%"
+	unset icon
+done | sed 's/ *$//'

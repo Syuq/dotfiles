@@ -1,0 +1,9 @@
+set clipboard+=unnamedplus
+set clipboard+=ideaput
+set number
+set relativenumber
+
+let mapleader=" "
+
+" Replace all
+nnoremap <leader>s :%s//g<Left><Left>

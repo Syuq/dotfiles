@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# This script needs `bc` to work
+
+# 1: left click
+# 2: middle click
+# 3: right click
+# 4: scroll up
+# 5: scroll down
+# 6: Shift + left click
+case "$BUTTON" in
+	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+esac
+
+[ -d ~/.cache/dwmblocks ] || mkdir -p ~/.cache/dwmblocks
+logfile="${XDG_CACHE_HOME:-$HOME/.cache}/dwmblocks/nettraf.log"
+[ -f "$logfile" ] || echo "0 0" > "$logfile"
+read -r rxprev txprev < "$logfile"
+
+rxcurrent="$(($(paste -d '+' /sys/class/net/[ew]*/statistics/rx_bytes)))"
+txcurrent="$(($(paste -d '+' /sys/class/net/[ew]*/statistics/tx_bytes)))"
+
+rxtraff=$(((rxcurrent-rxprev)/1024))
+[ $rxtraff -gt 1024 ] && rxtraff=$(bc <<< "scale=1; $rxtraff/1024") && rxunit="MiB" || rxunit="KiB"
+txtraff=$(((txcurrent-txprev)/1024))
+[ $txtraff -gt 1024 ] && txtraff=$(bc <<< "scale=1; $txtraff/1024") && txunit="MiB" || txunit="KiB"
+
+printf "🔻$rxtraff$rxunit 🔺$txtraff$txunit "
+
+echo "$rxcurrent $txcurrent" > "$logfile"

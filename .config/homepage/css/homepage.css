@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Mono');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+@import url('https://fonts.googleapis.com/css?family=Anton');
+
+.container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.bookmark-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 80%;
+    margin: 1em 0em;
+}
+
+@media only screen and (max-width: 960px) {
+    .container {
+        height: auto;
+    }
+    #clock {
+        margin-top: 1em;
+    }
+    .container > .bookmark-container {
+        flex-direction: column;
+        width: 60%;
+    }
+    .bookmark-container > .bookmark-set {
+        width: auto;
+        margin: 1em 0em;
+    }
+}
+
+.bookmark-set{
+    padding: 1em;
+    background-color: #000000;
+    border-radius: 3px;
+    font-family: "Roboto Mono";
+    font-size: .85rem;
+    width: 25%;
+    height: 16em;
+    margin: 0em .5em;
+}
+.bookmark-inner-container {
+    overflow-y: scroll;
+    height: 80%;
+    vertical-align: top;
+}
+/* Hide scrollbar for Chrome, Safari and Opera */
+.bookmark-inner-container::-webkit-scrollbar {
+    display: none;
+}
+/* Hide scrollbar for IE and Edge */
+.bookmark-inner-container {
+    -ms-overflow-style: none;
+    text-align: center
+}
+/* Hide scrollbar for Firefox */
+.bookmark-inner-container {
+    scrollbar-width: none;
+}
+.bookmark-title {
+    font-family: "Roboto";
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #ededed;
+    margin: 0em 0em .35em 0em;
+    text-align: center
+}
+.bookmark {
+    text-decoration: none;
+    color: #8c8c8b;
+    display:block;
+    margin: .4em 0em;
+}
+.bookmark:hover {
+    color: #ffb649;
+}
+

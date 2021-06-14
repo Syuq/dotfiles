@@ -1,0 +1,53 @@
+# Colorize commands when possible.
+alias \
+	ls="ls -hN --color=auto --group-directories-first" \
+    grep="grep --color=auto" \
+	diff="diff --color=auto"
+
+# Others
+alias \
+	lla="ls -lAhX" \
+	la="ls -AX" \
+	ll="ls -lh" \
+	cl="clear" \
+	sd="sudo openrc-shutdown -p now" \
+	rb="sudo openrc-shutdown -r now" \
+	ud='$AUR_HELPER -Syyu' \
+	cfv="nvim ~/.config/nvim/init.lua" \
+	cfx="nvim $XDG_CONFIG_HOME/X11/xinitrc" \
+	cfxp="nvim $XDG_CONFIG_HOME/X11/xprofile" \
+	cfz="nvim ~/.config/zsh/.zshrc" \
+	cfzp="nvim ~/.config/zsh/.zprofile" \
+	cfze="nvim ~/.config/zsh/.zshenv" \
+	cfa="nvim ~/.config/aliasrc" \
+	snvim="sudo -E nvim" \
+	cdu="cd /run/media/$USER" \
+    wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"' \
+    yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
+
+# Functions
+mcd() { mkdir -p $1 && cd $1; }
+fb() { du -a ~/.local/bin/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;}
+
+frepo() {
+	cd ~/user/works/repos
+	dir=$(ls $HOME/user/works/repos | fzf || echo .)
+	[ "$dir" = "code" ] && cd code && cd $(ls $HOME/user/works/repos/code | fzf || echo .) || cd $dir
+}
+
+faur() {
+    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" || 
+    (cd ~/user/works/aurs ; cd $(ls $HOME/user/works/aurs | fzf || echo .))
+}
+fparu() { 
+    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
+    ($AUR_HELPER -Fy; $AUR_HELPER -Slq | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -S --needed)
+}
+fpac() { 
+    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
+    (sudo pacman -Fy; pacman -Slq | fzf --height=100% --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S --needed)
+}
+frparu() { 
+    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
+    ($AUR_HELPER -Qqe | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -Rns)
+}

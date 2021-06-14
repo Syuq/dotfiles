@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# This script is for openrc system only and needs dmenu to work
+# make openrc-shutdown run with asking for password before running this script
+
+optandcmd="\
+logout | kill -TERM $(pidof -s dwm)
+reboot | sudo openrc-shutdown -r now
+shutdown | sudo openrc-shutdown -p now"
+
+choice="$(echo "$optandcmd" | cut -f 1 -d '|' | dmenu)" || exit
+
+`echo "$optandcmd" | grep "^$choice" | cut -f 2 -d '|'`
+
+exit 0
