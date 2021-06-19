@@ -1,14 +1,21 @@
 # Colorize commands when possible.
+#alias \
+	#ls="ls -hN --color=auto --group-directories-first" \
 alias \
-	ls="ls -hN --color=auto --group-directories-first" \
+	ls="exa --group-directories-first" \
     grep="grep --color=auto" \
 	diff="diff --color=auto"
 
 # Others
+#alias \
+	#lla="ls -lAhX" \
+	#la="ls -AX" \
+	#ll="ls -lh" \
 alias \
-	lla="ls -lAhX" \
-	la="ls -AX" \
-	ll="ls -lh" \
+	lla="ls -labg" \
+	la="ls -a" \
+	lt="ls -T" \
+	ll="ls -lbg" \
 	cl="clear" \
 	sd="sudo openrc-shutdown -p now" \
 	rb="sudo openrc-shutdown -r now" \
