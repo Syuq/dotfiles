@@ -23,7 +23,8 @@ alias \
 	snvim="sudo -E nvim" \
 	cdu="cd /run/media/$USER" \
     wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"' \
-    yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
+    yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"' \
+    config='git --git-dir=$HOME/user/works/repos/dotfiles/ --work-tree=$HOME'
 
 # Functions
 mcd() { mkdir -p $1 && cd $1; }
