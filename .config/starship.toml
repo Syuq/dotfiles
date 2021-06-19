@@ -18,6 +18,7 @@ format =  "[$hostname](bold blue) "
 [directory]
 truncation_length = 8
 truncation_symbol = "…/"
+home_symbol = "~"
 
 [git_branch]
 format = "[$symbol$branch]($style) "
@@ -25,14 +26,15 @@ symbol = "[](bold white) "
 
 [git_status]
 style = "bold cyan"
-ahead = '[\($count\)](yellow)'
-behind = '[\($count\)](yellow)'
+ahead = '[⇡\($count\)](yellow)'
+behind = '[⇣\($count\)](yellow)'
 untracked = '[?\($count\)](yellow)'
 modified = '[!\($count\)](red)'
-staged = '[*\($count\)](green)'
+staged = '[+\($count\)](green)'
 renamed = '[»\($count\)](white)'
 deleted = '[\($count\)](red)'
 
 [character]
 success_symbol = "[√](bold green)"
 error_symbol = "[](bold red)"
+vicmd_symbol = "[](bold green)"
