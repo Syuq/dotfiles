@@ -20,4 +20,4 @@ setxkbmap -option ctrl:nocaps,shift:both_capslock
 killall xcape 2>/dev/null ; xcape
 
 # change wallpaper every 10 minutes
-nowater -s vietnam -t 10m &
+nowater -s vietnam -t 10m
