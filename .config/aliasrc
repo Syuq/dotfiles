@@ -44,8 +44,7 @@ frepo() {
 }
 
 faur() {
-    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" || 
-    (cd ~/user/works/aurs ; cd $(ls $HOME/user/works/aurs | fzf || echo .))
+    cd ~/user/works/aurs ; cd $(ls $HOME/user/works/aurs | fzf || echo .)
 }
 fparu() { 
     uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
