@@ -4,14 +4,15 @@
 # anywhere without writing whole path.
 export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 
-xset r rate 300 50  # speed xrate up
-numlockx            # turn on numlock key
-nm-applet &         # networkmanager applet
-blueman-applet &    # bluetooth applet
-picom -b            # for transparency
-dunst &             # notification server
-ibus-daemon -drx    # start ibus daemon
-udiskie -s &        # auto mount USB
+xset r rate 300 50          # speed xrate up
+numlockx                    # turn on numlock key
+nm-applet &                 # networkmanager applet
+blueman-applet &            # bluetooth applet
+picom -b                    # for transparency
+dunst &                     # notification server
+ibus-daemon -drx            # start ibus daemon
+udiskie -s &                # auto mount USB
+unclutter -idle 2 -root &   # hide cursor after 2s if it's not used
 
 # make CapsLock a Ctrl key, press both Shift keys to enable/disable CapsLock
 setxkbmap -option ctrl:nocaps,shift:both_capslock
