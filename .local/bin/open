@@ -17,9 +17,9 @@ case "$ext" in
         wpp "$filename" ;;
     "xlsx" | "xls" | "csv")
         et "$filename" ;;
-    "mp4" | "mkv" | "mp3")
+    "mp4" | "mkv" | "mp3" | "gif")
         mpv "$filename" ;;
-    "jpg" | "jpeg" | "png" | "gif")
+    "jpg" | "jpeg" | "png")
         sxiv "$filename" ;;
 	"html")
 		"$BROWSER" "$filename" ;;
