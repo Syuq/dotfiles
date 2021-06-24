@@ -28,7 +28,7 @@ export FZF_DEFAULT_OPTS="--layout=reverse --height 40% --color=16 --border"
 
 # Others
 export CARGO_HOME="$XDG_DATA_HOME"/cargo
-export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
 export TERMINFO="$XDG_DATA_HOME"/terminfo
 export TERMINFO_DIRS="$XDG_DATA_HOME"/terminfo:/usr/share/terminfo
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority" # Warning: This line will break some DMs. Remove this line if you're using DMs like lightdm, gdm, sddm,...
