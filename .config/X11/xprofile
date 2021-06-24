@@ -12,7 +12,6 @@ picom -b                    # for transparency
 dunst &                     # notification server
 ibus-daemon -drx            # start ibus daemon
 udiskie -s &                # auto mount USB
-unclutter -idle 2 -root &   # hide cursor after 2s if it's not used
 
 # make CapsLock a Ctrl key, press both Shift keys to enable/disable CapsLock
 setxkbmap -option ctrl:nocaps,shift:both_capslock
@@ -21,4 +20,4 @@ setxkbmap -option ctrl:nocaps,shift:both_capslock
 killall xcape 2>/dev/null ; xcape
 
 # change wallpaper every 10 minutes
-nowater -s vietnam -t 10m
+nowater -T
