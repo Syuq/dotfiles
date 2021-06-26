@@ -37,6 +37,11 @@ alias \
 mcd() { mkdir -p $1 && cd $1; }
 fb() { du -a ~/.local/bin/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;}
 
+bwin() {
+    winboot=$(efibootmgr | grep Windows | cut -d'*' -f1 | cut -d't' -f2)
+    sudo efibootmgr --bootnext $winboot && rb
+}
+
 frepo() {
 	cd ~/user/works/repos
 	dir=$(ls $HOME/user/works/repos | fzf || echo .)
