@@ -8,6 +8,7 @@ setopt autocd
 HISTSIZE=10000
 SAVEHIST=10000
 HISTFILE=~/.cache/zsh/history
+HISTIGNORE=":ls:la:ll:cl:cd:fb:frepo:faur:"
 
 # Basic auto/tab complete:
 autoload -U compinit
