@@ -13,8 +13,10 @@ esac
 for battery in /sys/class/power_supply/BAT?
 do
 	capacity=$(cat "$battery"/capacity) || break
+	batStatus="$(cat "$battery"/status)"
+	[[ "$batStatus" == [Cc]"harging" ]] && xbacklight -set 100%
 
-    case "$(cat "$battery"/status)" in
+    case "$batStatus" in
 		[Dd]"ischarging" | [Cc]"harging")
 			if [ $capacity -lt 10 ]; then
 				status=""
@@ -22,7 +24,9 @@ do
 			elif [ $capacity -lt 20 ] && [ $capacity -ge 10 ]; then
 				status=""
 				icon="❗"
-				dunstify -i battery-level-20-symbolic.symbolic -r 1234 -u critical 'Low battery!'
+				 [[ "$batStatus" != [Cc]"harging" ]] &&
+					dunstify -i battery-level-20-symbolic.symbolic -r 1234 -u critical 'Low battery!' &&
+					xbacklight -set 1%
 			elif [ $capacity -lt 30 ] && [ $capacity -ge 20 ]; then
 				status=""
 			elif [ $capacity -lt 40 ] && [ $capacity -ge 30 ]; then
