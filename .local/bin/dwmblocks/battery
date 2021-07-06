@@ -14,7 +14,9 @@ for battery in /sys/class/power_supply/BAT?
 do
 	capacity=$(cat "$battery"/capacity) || break
 	batStatus="$(cat "$battery"/status)"
-	[[ "$batStatus" == [Cc]"harging" ]] && xbacklight -set 100%
+	if [[ "$batStatus" == [Cc]"harging" ]] || [[ "$batStatus" == [Ff]"ull" ]]; then
+		xbacklight -set 100%
+	fi
 
     case "$batStatus" in
 		[Dd]"ischarging" | [Cc]"harging")
