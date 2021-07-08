@@ -6,16 +6,13 @@ error() { echo -e "$1" && exit; }
 
 [ $EUID -eq 0 ] && error "Do not run this script as root."
 
-tmpfile="/tmp/git.io.tmp"
-curl_cmd=(curl -s https://git.io/ -i)
+_tmpfile="/tmp/git.io.tmp"
+_curl_cmd=(curl -s https://git.io/ -i)
 
 checkInternet() {
     if which wget > /dev/null; then
-		wget --hsts-file="$HOME/.cache/wget-hsts" --quiet --spider google.com || {
-			echo "No internet!"
-			exit
-		}
-	fi
+        wget --quiet --spider google.com || { echo "No internet!"; exit; }
+    fi
 }
 
 usage() {
@@ -31,31 +28,32 @@ PARSED_ARGUMENTS=$(getopt -a -n $0 -o l:c:h --long link:,code:,help -- "$@")
 
 while :; do
     case "${1}" in
-        -l | --link)	link=${2} ; shift 2 ;;
-        -c | --code)	code=${2} ; shift 2 ;;
-        -- | '')		shift; break ;;
+        -l | --link)	_link=${2} ; shift 2 ;;
+        -c | --code)	_code=${2} ; shift 2 ;;
         -h | --help)	usage ;;
+        -- | '')        shift; break ;;
         *) echo "Unexpected option: $1 is not a valid option." ; usage ;;
     esac
 done
 
-[ -z "$link" ] && echo "You must give git.io a github URL." && usage || curl_cmd+=( -F url="$link")
-[ -n "$code" ] && curl_cmd+=( -F code="$code")
+[ -z "$_link" ] && _link="$(command -v xclip > /dev/null && xclip -o)" ; _curl_cmd+=( -F url="$_link")
+[ -n "$_code" ] && _curl_cmd+=( -F code="$_code")
 
 checkInternet
-"${curl_cmd[@]}" | sed -e "s/\r//g" > "$tmpfile" 			# use sed to get rid of annoying ^M character
+"${_curl_cmd[@]}" | sed -e "s/\r//g" > "$_tmpfile"                # use sed to get rid of annoying ^M character
 
-status="$(grep "Status" "$tmpfile" | cut -d' ' -f3)"
-[ "$status" != "Created" ] && echo "Your URL is not a github URL." && exit
-location="$(grep "Location" "$tmpfile" | cut -d' ' -f2)"
+_status="$(grep "Status" "$_tmpfile" | cut -d' ' -f3)"
+[ "$_status" != "Created" ] && echo "Your URL is not a github URL." && exit
+_location="$(grep "Location" "$_tmpfile" | cut -d' ' -f2)"
 
-code2="$(echo "$location" | cut -d'/' -f4)"
+_code2="$(echo "$_location" | cut -d'/' -f4)"
 
-if [ -n "$code" ] && [ "$code2" != "$code" ]; then
-	echo "Sorry. This URL has already been set to $location"
+if [ -n "$_code" ] && [ "$_code2" != "$_code" ]; then
+    echo "Sorry. This URL has already been set to $_location"
 else
-	echo "Your shortened URL: $location"
+    echo "Your shortened URL: $_location"
 fi
-printf "$location" | xclip -se c 2> /dev/null && echo "The shortened URL is copied to your clipboard!"
+
+command -v xclip > /dev/null && printf "$_location" | xclip -se c 2> /dev/null && echo "The shortened URL is copied to your clipboard!"
 
 exit 0
