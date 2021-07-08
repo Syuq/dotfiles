@@ -19,7 +19,6 @@ alias \
 	cl="clear" \
 	sd="sudo openrc-shutdown -p now" \
 	rb="sudo openrc-shutdown -r now" \
-	ud='$AUR_HELPER -Syyu' \
 	cfv="nvim ~/.config/nvim/init.lua" \
 	cfx="nvim $XDG_CONFIG_HOME/X11/xinitrc" \
 	cfxp="nvim $XDG_CONFIG_HOME/X11/xprofile" \
@@ -34,6 +33,14 @@ alias \
     config='git --git-dir=$HOME/user/works/repos/dotfiles/ --work-tree=$HOME'
 
 # Functions
+ud() {
+    if [[ $(uname -r) == *gentoo* ]]; then
+        sudo emerge --sync && sudo emerge -auDU @world
+    else
+        $AUR_HELPER -Syyu
+    fi
+}
+
 mcd() { mkdir -p $1 && cd $1; }
 fb() { du -a ~/.local/bin/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;}
 
@@ -43,23 +50,43 @@ bwin() {
 }
 
 frepo() {
-	cd ~/user/works/repos
-	dir=$(ls $HOME/user/works/repos | fzf || echo .)
-	[ "$dir" = "code" ] && cd code && cd $(ls $HOME/user/works/repos/code | fzf || echo .) || cd $dir
+    cd ~/user/works/repos
+    dir=$(ls $HOME/user/works/repos | fzf || echo .)
+    [ "$dir" = "code" ] && cd code && cd $(ls $HOME/user/works/repos/code | fzf || echo .) || cd $dir
 }
 
 faur() {
     cd ~/user/works/aurs ; cd $(ls $HOME/user/works/aurs | fzf || echo .)
 }
+
 fparu() { 
     uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
     ($AUR_HELPER -Fy; $AUR_HELPER -Slq | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -S --needed)
 }
+
 fpac() { 
     uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
     (sudo pacman -Fy; pacman -Slq | fzf --height=100% --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S --needed)
 }
+
 frparu() { 
     uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
     ($AUR_HELPER -Qqe | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -Rns)
+}
+
+uker() {
+    uname -r | grep "gentoo" > /dev/null || { echo "This function only works on Gentoo"; exit; }
+    cp /usr/src/linux/.config "$HOME/$(uname -r).config"
+    eselect kernel list
+    echo -n "Choose kernel: "
+    read op
+    sudo eselect kernel set $op
+    cd /usr/src/linux
+    sudo make mrproper
+    sudo cp "$HOME/$(uname -r).config" .config
+    sudo make olddefconfig
+    sudo make -j4 && sudo make modules_install install
+    sudo emerge @module-rebuild
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+    echo "Done!"
 }
