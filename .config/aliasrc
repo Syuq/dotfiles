@@ -2,32 +2,32 @@
 #alias \
 	#ls="ls -hN --color=auto --group-directories-first" \
 alias \
-	ls="exa --group-directories-first" \
+    ls="exa --group-directories-first" \
     grep="grep --color=auto" \
-	diff="diff --color=auto"
+    diff="diff --color=auto"
 
 # Others
 #alias \
-	#lla="ls -lAhX" \
-	#la="ls -AX" \
-	#ll="ls -lh" \
+    #lla="ls -lAhX" \
+    #la="ls -AX" \
+    #ll="ls -lh" \
 alias \
-	lla="ls -labg" \
-	la="ls -a" \
-	lt="ls -T" \
-	ll="ls -lbg" \
-	cl="clear" \
-	sd="sudo openrc-shutdown -p now" \
-	rb="sudo openrc-shutdown -r now" \
-	cfv="nvim ~/.config/nvim/init.lua" \
-	cfx="nvim $XDG_CONFIG_HOME/X11/xinitrc" \
-	cfxp="nvim $XDG_CONFIG_HOME/X11/xprofile" \
-	cfz="nvim ~/.config/zsh/.zshrc" \
-	cfzp="nvim ~/.config/zsh/.zprofile" \
-	cfze="nvim ~/.config/zsh/.zshenv" \
-	cfa="nvim ~/.config/aliasrc" \
-	snvim="sudo -E nvim" \
-	cdu="cd /run/media/$USER" \
+    lla="ls -labg" \
+    la="ls -a" \
+    lt="ls -T" \
+    ll="ls -lbg" \
+    cl="clear" \
+    sd="sudo openrc-shutdown -p now" \
+    rb="sudo openrc-shutdown -r now" \
+    cfv="nvim ~/.config/nvim/init.lua" \
+    cfx="nvim ~/.config/X11/xinitrc" \
+    cfxp="nvim ~/.config/X11/xprofile" \
+    cfz="nvim ~/.config/zsh/.zshrc" \
+    cfzp="nvim ~/.config/zsh/.zprofile" \
+    cfze="nvim ~/.config/zsh/.zshenv" \
+    cfa="nvim ~/.config/aliasrc" \
+    sedit="sudo -e" \
+    cdu="cd /run/media/$USER" \
     wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"' \
     yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"' \
     config='git --git-dir=$HOME/user/works/repos/dotfiles/ --work-tree=$HOME'
@@ -42,7 +42,7 @@ ud() {
 }
 
 mcd() { mkdir -p $1 && cd $1; }
-fb() { du -a ~/.local/bin/* | awk '{print $2}' | fzf | xargs -r $EDITOR ;}
+fb() { $EDITOR $(du -a ~/.local/bin/* | awk '{print $2}' | fzf) ;}
 
 bwin() {
     winboot=$(efibootmgr | grep "Windows Boot Manager" | cut -d'*' -f1 | cut -d't' -f2)
