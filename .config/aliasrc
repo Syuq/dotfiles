@@ -1,21 +1,15 @@
-# Colorize commands when possible.
-#alias \
-	#ls="ls -hN --color=auto --group-directories-first" \
-alias \
-    ls="exa --group-directories-first" \
-    grep="grep --color=auto" \
-    diff="diff --color=auto"
+# Use neovim for vim if present.
+[ -x "$(command -v doas)" ] && alias sudo="doas"
 
 # Others
-#alias \
-    #lla="ls -lAhX" \
-    #la="ls -AX" \
-    #ll="ls -lh" \
 alias \
+    ls="exa --group-directories-first" \
     lla="ls -labg" \
     la="ls -a" \
     lt="ls -T" \
     ll="ls -lbg" \
+    grep="grep --color=auto" \
+    diff="diff --color=auto" \
     cl="clear" \
     sd="sudo openrc-shutdown -p now" \
     rb="sudo openrc-shutdown -r now" \
@@ -26,7 +20,7 @@ alias \
     cfzp="nvim ~/.config/zsh/.zprofile" \
     cfze="nvim ~/.config/zsh/.zshenv" \
     cfa="nvim ~/.config/aliasrc" \
-    sedit="sudo -e" \
+    snvim="sudo nvim" \
     cdu="cd /run/media/$USER" \
     wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"' \
     yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"' \
