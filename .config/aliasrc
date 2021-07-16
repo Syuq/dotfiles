@@ -1,7 +1,4 @@
-# Use neovim for vim if present.
-[ -x "$(command -v doas)" ] && alias sudo="doas"
-
-# Others
+# Alias
 alias \
     ls="exa --group-directories-first" \
     lla="ls -labg" \
