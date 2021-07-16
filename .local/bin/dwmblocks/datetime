@@ -7,23 +7,29 @@
 # 5: scroll down
 # 6: Shift + left click
 case $BUTTON in
-	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
+    1) [ -f /tmp/date.dwmblocks ] && 
+        rm /tmp/date.dwmblocks || 
+        touch /tmp/date.dwmblocks
+        pkill -RTMIN+3 dwmblocks ;;
+    6) "$TERMINAL" -e "$EDITOR" "$0" ;;
 esac
 
 case "$(date '+%I')" in
-	"00") icon="🕛" ;;
-	"01") icon="🕐" ;;
-	"02") icon="🕑" ;;
-	"03") icon="🕒" ;;
-	"04") icon="🕓" ;;
-	"05") icon="🕔" ;;
-	"06") icon="🕕" ;;
-	"07") icon="🕖" ;;
-	"08") icon="🕗" ;;
-	"09") icon="🕘" ;;
-	"10") icon="🕙" ;;
-	"11") icon="🕚" ;;
-	"12") icon="🕛" ;;
+    "00") icon="🕛" ;;
+    "01") icon="🕐" ;;
+    "02") icon="🕑" ;;
+    "03") icon="🕒" ;;
+    "04") icon="🕓" ;;
+    "05") icon="🕔" ;;
+    "06") icon="🕕" ;;
+    "07") icon="🕖" ;;
+    "08") icon="🕗" ;;
+    "09") icon="🕘" ;;
+    "10") icon="🕙" ;;
+    "11") icon="🕚" ;;
+    "12") icon="🕛" ;;
 esac
 
-date "+   %a, %d %b $icon%I:%M%p "
+[ -f /tmp/date.dwmblocks ] &&
+date "+   %a, %d %b $icon%I:%M%p " ||
+date "+ $icon%I:%M%p "
