@@ -1,0 +1,221 @@
+[colors]
+background = #222
+background-alt = #444
+foreground = #dfdfdf
+foreground-alt = #555
+primary = #ffb52a
+secondary = #e60053
+alert = #bd2c40
+
+[bar/main]
+;monitor = ${env:MONITOR:HDMI-1}
+width = 100%
+height = 27
+;offset-x = 1%
+;offset-y = 1%
+radius = 10.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 4
+border-color = #00000000
+
+padding-left = 0
+padding-right = 0
+
+module-margin-left = 0
+module-margin-right = 1
+
+enable-ipc = true
+
+font-0 = Liberation Mono:size=10:antialias=true;2
+font-1 = Noto Color Emoji:style=Regular:scale=10:antialias=false;2
+font-2 = JetBrainsMono Nerd Font:style=Regular:scale=10:antialias=true;2
+font-3 = Liberation Mono:size=13:antialias=true;2
+
+modules-left = dwm
+modules-center = 
+modules-right = covid memory cpu volume battery date
+
+tray-position = right
+tray-padding = 2
+;tray-background = #0063ff
+
+;wm-restack = bspwm
+;wm-restack = i3
+
+;override-redirect = true
+
+;scroll-up = bspwm-desknext
+;scroll-down = bspwm-deskprev
+
+;scroll-up = i3wm-wsnext
+;scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[module/xwindow]
+type = internal/xwindow
+label = %title:0:30:...%
+
+; Separator in between workspaces
+; label-separator = |
+
+[module/dwm]
+type = internal/dwm
+format = <label-tags> <label-layout> <label-floating>
+; Path to dwm socket (default: /tmp/dwm.sock)
+; socket-path = /tmp/dwm.sock
+
+; Left-click to view tag, right-click to toggle tag view
+enable-tags-click = true
+; Scroll to cycle between available tags
+enable-tags-scroll = false
+; If true and enable-tags-scroll = true, scrolling will view all tags regardless if occupied
+tags-scroll-empty = false
+; If true and enable-tags-scroll = true, scrolling will cycle through tags backwards
+tags-scroll-reverse = false
+; If true and enable-tags-scroll = true, wrap active tag when scrolling
+tags-scroll-wrap = false
+; Left-click to set secondary layout, right-click to switch to previous layout
+enable-layout-click = true
+; Scroll to cycle between available layouts
+enable-layout-scroll = false
+; Wrap when scrolling and reaching begining/end of layouts
+layout-scroll-wrap = false
+; Reverse scroll direction
+layout-scroll-reverse = false
+
+; If enable-layout-click = true, clicking the layout symbol will switch to this layout
+secondary-layout-symbol = ><>
+
+; Separator in between shown tags
+; label-separator = |
+
+; Title of currently focused window
+; Available tokens:
+;   %title%
+;label-title = %title%
+;label-title-padding = 0
+;label-title-forefround = ${colors.primary}
+;label-title-maxlen = 60
+
+; Symbol of current layout
+; Available tokens:
+;   %symbol%
+label-layout = %symbol%
+label-layout-padding = 1
+label-layout-foreground = #d8dee9
+label-layout-background = #5e81ac
+
+; Text to show when currently focused window is floating
+label-floating = F
+
+; States: focused, unfocused, visible, urgent, empty
+; Available tokens:
+;   %name%
+
+; focused = Selected tag on focused monitor
+label-focused = %name%
+label-focused-foreground = #e5e9f0
+label-focused-background = #4c566a
+label-focused-underline= #bf616a
+label-focused-padding = 2
+label-focused-font = 4
+
+; unfocused = Unselected tag on unselected monitor
+label-unfocused = %name%
+label-unfocused-padding = 2
+;label-unfocused-background= #f87
+;label-unfocused-underline= #f87
+
+; visible = Unselected tag, but occupied tag on any monitor
+label-visible = %name%
+label-visible-foreground = #8fbcbb
+label-visible-background = #2e3440
+label-visible-underline = #d08770
+label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Unselected tag with window that has urgency hint set
+label-urgent = %name%
+label-urgent-background = ${colors.alert}
+label-urgent-padding = 2
+
+; empty = Unselected and unoccupied tag
+; This can be set to an empty string to hide empty tags
+label-empty =
+label-empty-background = ${colors.primary}
+label-empty-padding = 2
+
+[module/covid]
+type = custom/script
+exec = covid
+interval = 60
+click-left = $BROWSER "https://corona-stats.online?top=20"
+click-right = $TERMINAL -e $EDITOR $HOME/.local/bin/polybar/covid
+format-underline = #5e81ac
+
+[module/cpu]
+type = custom/script
+exec = cpu
+interval = 2
+click-left = $TERMINAL -e htop
+click-right = $TERMINAL -e $EDITOR $HOME/.local/bin/polybar/cpu
+format-underline = #bf616a
+
+[module/memory]
+type = custom/script
+exec = memory
+interval = 2
+click-left = $TERMINAL -e htop
+click-right = $TERMINAL -e $EDITOR $HOME/.local/bin/polybar/memory
+format-underline = #d08770
+
+[module/volume]
+type = custom/ipc
+hook-0 = volume
+initial = 1
+click-left = pavucontrol
+click-middle = changeVolume toggle; polybar-msg hook volume 1
+click-right = $TERMINAL -e $EDITOR $HOME/.local/bin/polybar/volume
+scroll-up = changeVolume 5%+; polybar-msg hook volume 1
+scroll-down = changeVolume 5%-; polybar-msg hook volume 1
+format-underline = #ebcb8b
+
+[module/battery]
+type = custom/script
+exec = battery
+interval = 5
+click-right = $TERMINAL -e $EDITOR $HOME/.local/bin/polybar/battery
+format-underline = #a3be8c
+
+[module/date]
+type = internal/date
+interval = 5
+date =
+date-alt = "%a, %d %b, "
+time = %H:%M
+time-alt = %H:%M:%S
+format-prefix = 🕛
+format-underline = #b48ead
+label = " %date%%time%"
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+;pseudo-transparency = false
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini
