@@ -79,5 +79,6 @@ uker() {
     sudo make -j4 && sudo make modules_install install
     sudo emerge @module-rebuild
     sudo grub-mkconfig -o /boot/grub/grub.cfg
-    echo "Done!"
+    cd
+    echo "Updated kernel successfully!"
 }
