@@ -17,6 +17,7 @@ alias \
     cfzp="nvim ~/.config/zsh/.zprofile" \
     cfze="nvim ~/.config/zsh/.zshenv" \
     cfa="nvim ~/.config/aliasrc" \
+    cfp="nvim ~/.config/polybar/config" \
     snvim="sudo nvim" \
     cdu="cd /run/media/$USER" \
     wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"' \
