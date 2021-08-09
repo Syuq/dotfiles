@@ -17,59 +17,59 @@ scrotdir="$HOME/user/pictures/screenshots"
 [ -d "$scrotdir" ] || mkdir -p "$scrotdir"
 
 declare -a options=("an area" 
-					"current window"
-					"full screen"
-					"an area (copy)"
-					"current window (copy)"
-					"full screen (copy)")
+                    "current window"
+                    "full screen"
+                    "an area (copy)"
+                    "current window (copy)"
+                    "full screen (copy)")
 
 sendNotification() {
-	ln -sf "$(readlink -f "$_")" "$l_scrotloc"
-	notify-send -i "$l_scrotloc" "$1" "$2"
+    ln -sf "$(readlink -f "$_")" "$l_scrotloc"
+    notify-send -i "$l_scrotloc" "$1" "$2"
 }
 
 anArea() {
-	maim -s $scrotdir/scrot-area-"$(date '+%y%m%d-%H%M-%S').png" &&
-	sendNotification "Screenshot" "Saved in ~/user/pictures/screenshots"
+    maim -s $scrotdir/scrot-area-"$(date '+%y%m%d-%H%M-%S').png" &&
+    sendNotification "Screenshot" "Saved in ~/user/pictures/screenshots"
 }
 
 currentWindow() {
-	maim -i "$(xdotool getactivewindow)" $scrotdir/scrot-window-"$(date '+%y%m%d-%H%M-%S').png" &&
-	sendNotification "Screenshot" "Saved in ~/user/pictures/screenshots"
+    maim -i "$(xdotool getactivewindow)" $scrotdir/scrot-window-"$(date '+%y%m%d-%H%M-%S').png" &&
+    sendNotification "Screenshot" "Saved in ~/user/pictures/screenshots"
 }
 
 fullScreen() {
-	maim $scrotdir/scrot-full-"$(date '+%y%m%d-%H%M-%S').png" &&
-	sendNotification "Screenshot" "Saved in ~/user/pictures/screenshots"
+    maim $scrotdir/scrot-full-"$(date '+%y%m%d-%H%M-%S').png" &&
+    sendNotification "Screenshot" "Saved in ~/user/pictures/screenshots"
 }
 
 anAreaCopy() {
-	maim -s | xclip -selection clipboard -t image/png
-	sendNotification "Screenshot" "Copied to clipboard"
+    maim -s | xclip -selection clipboard -t image/png
+    sendNotification "Screenshot" "Copied to clipboard"
 }
 
 currentWindowCopy() {
-	maim -i "$(xdotool getactivewindow)" | xclip -selection clipboard -t image/png
-	sendNotification "Screenshot" "Copied to clipboard"
+    maim -i "$(xdotool getactivewindow)" | xclip -selection clipboard -t image/png
+    sendNotification "Screenshot" "Copied to clipboard"
 }
 
 fullScreenCopy() {
-	maim | xclip -selection clipboard -t image/png
-	sendNotification "Screenshot" "Copied to clipboard"
+    maim | xclip -selection clipboard -t image/png
+    sendNotification "Screenshot" "Copied to clipboard"
 }
 
 main() {
-	[ "$1" = "--full" ] && fullScreen && exit 0
-
-	case "$(for i in "${options[@]}"; do echo "$i"; done | \
-			dmenu -l ${#options[@]} -p "Choose a screenshot option:")" in
-		"${options[0]}") anArea ;;
-		"${options[1]}") currentWindow ;;
-		"${options[2]}") fullScreen ;;
-		"${options[3]}") anAreaCopy ;;
-		"${options[4]}") currentWindowCopy ;;
-		"${options[5]}") fullScreenCopy ;;
-	esac
+    [ "$1" = "--full" ] && fullScreen && exit 0
+    
+    case "$(for i in "${options[@]}"; do echo "$i"; done | \
+            dmenu -l ${#options[@]} -p "Choose a screenshot option:")" in
+        "${options[0]}") anArea ;;
+        "${options[1]}") currentWindow ;;
+        "${options[2]}") fullScreen ;;
+        "${options[3]}") anAreaCopy ;;
+        "${options[4]}") currentWindowCopy ;;
+        "${options[5]}") fullScreenCopy ;;
+    esac
 }
 
 main "$@"

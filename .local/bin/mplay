@@ -1,0 +1,9 @@
+#!/bin/bash
+
+error() { echo -e "$1" && exit; }
+
+[ $EUID -eq 0 ] && error "Do not run this script as root."
+
+mpv --ytdl-format=bestvideo+bestaudio/best --speed=1.0 "$(xclip -o)"
+
+exit 0

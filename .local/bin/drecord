@@ -17,102 +17,102 @@ dir="$HOME/user/videos/screencast"
 resolution="$(xdpyinfo | awk '/dimensions/{print $2}')"
 
 updateicon() {
-	echo "$1" > /tmp/recordingicon
-	pkill -RTMIN+13 "${STATUSBAR:-dwmblocks}"
+    echo "$1" > /tmp/recordingicon
+    pkill -RTMIN+13 "${STATUSBAR:-dwmblocks}"
 }
 
 killrecording() {
-	recpid="$(cat /tmp/recordingpid)"
-	# kill with SIGTERM, allowing finishing touches.
-	kill -15 "$recpid" >/dev/null 2>&1 
-	rm -f /tmp/recordingpid
-	updateicon ""
-	pkill -RTMIN+13 "${STATUSBAR:-dwmblocks}"
-	# even after SIGTERM, ffmpeg may still run, so SIGKILL it.
-	sleep 3
-	kill -9 "$recpid" >/dev/null 2>&1 
-	exit 0
+    recpid="$(cat /tmp/recordingpid)"
+    # kill with SIGTERM, allowing finishing touches.
+    kill -15 "$recpid" >/dev/null 2>&1 
+    rm -f /tmp/recordingpid
+    updateicon ""
+    pkill -RTMIN+13 "${STATUSBAR:-dwmblocks}"
+    # even after SIGTERM, ffmpeg may still run, so SIGKILL it.
+    sleep 3
+    kill -9 "$recpid" >/dev/null 2>&1 
+    exit 0
 }
 
 screencast() {
-	ffmpeg \
-	-f x11grab \
-	-video_size $resolution \
-    -framerate 60 \
-    -i $DISPLAY \
-    -f alsa \
-    -i default \
-    -c:v libx264 \
-    -preset ultrafast \
-    -c:a aac \
-	"$dir/screencast-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
-	echo $! > /tmp/recordingpid
-	updateicon " - "
+    ffmpeg \
+        -f x11grab \
+        -video_size $resolution \
+        -framerate 60 \
+        -i $DISPLAY \
+        -f alsa \
+        -i default \
+        -c:v libx264 \
+        -preset ultrafast \
+        -c:a aac \
+        "$dir/screencast-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
+    echo $! > /tmp/recordingpid
+    updateicon " - "
 }
 
 video() {
     ffmpeg \
-    -f x11grab \
-    -video_size $resolution \
-    -framerate 60 \
-    -i $DISPLAY \
-    -c:v libx264 \
-    -preset ultrafast \
-	"$dir/video-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
-	echo $! > /tmp/recordingpid
-	updateicon ""
+        -f x11grab \
+        -video_size $resolution \
+        -framerate 60 \
+        -i $DISPLAY \
+        -c:v libx264 \
+        -preset ultrafast \
+        "$dir/video-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
+    echo $! > /tmp/recordingpid
+    updateicon ""
 }
 
 webcamhidef() {
     ffmpeg \
-	-f v4l2 \
-	-i /dev/video0 \
-	-video_size $resolution \
-	"$dir/webcam-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
-	echo $! > /tmp/recordingpid
-	updateicon "🎥"
+        -f v4l2 \
+        -i /dev/video0 \
+        -video_size $resolution \
+        "$dir/webcam-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
+    echo $! > /tmp/recordingpid
+    updateicon "🎥"
 }
 
 webcam() {
     ffmpeg \
-	-f v4l2 \
-	-i /dev/video0 \
-	-video_size 640x480 \
-	"$dir/webcam-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
-	echo $! > /tmp/recordingpid
-	updateicon "🎥"
+        -f v4l2 \
+        -i /dev/video0 \
+        -video_size 640x480 \
+        "$dir/webcam-$(date '+%y%m%d-%H%M-%S').mp4" >/dev/null 2>&1 &
+    echo $! > /tmp/recordingpid
+    updateicon "🎥"
 }
 
 
 audio() {
-	ffmpeg \
-	-f alsa -i default \
-	-c:a flac \
-	"$dir/audio-$(date '+%y%m%d-%H%M-%S').flac" >/dev/null 2>&1 &
-	echo $! > /tmp/recordingpid
-	updateicon ""
+    ffmpeg \
+        -f alsa -i default \
+        -c:a flac \
+        "$dir/audio-$(date '+%y%m%d-%H%M-%S').flac" >/dev/null 2>&1 &
+    echo $! > /tmp/recordingpid
+    updateicon ""
 }
 
 askrecording() {
-	choice=$(printf "screencast\\nvideo\\naudio\\nwebcam\\nwebcam (hi-def)" | dmenu -l 5 -p "Select recording style:")
-	case "$choice" in
-		"screencast") screencast;;
-		"video") video;;
-		"audio") audio;;
-		"webcam") webcam;;
-		"webcam (hi-def)") webcamhidef;;
-	esac
+    choice=$(printf "screencast\\nvideo\\naudio\\nwebcam\\nwebcam (hi-def)" | dmenu -l 5 -p "Select recording style:")
+    case "$choice" in
+        "screencast") screencast;;
+        "video") video;;
+        "audio") audio;;
+        "webcam") webcam;;
+        "webcam (hi-def)") webcamhidef;;
+    esac
 }
 
 asktoend() {
-	response=$(printf "No\\nYes" | dmenu -p "Recording still active. End recording?") &&
-	[ "$response" = "Yes" ] &&  killrecording
+    response=$(printf "No\\nYes" | dmenu -p "Recording still active. End recording?") &&
+        [ "$response" = "Yes" ] &&  killrecording
 }
 
 case "$1" in
-	"--screencast") screencast;;
-	"--video") video;;
-	"--audio") audio;;
-	"--kill") pidof ffmpeg > /dev/null 2>&1 && killrecording || echo "ffmpeg is not running.";;
-	*) ([ -f /tmp/recordingpid ] && asktoend && exit) || askrecording;;
+    "--screencast") screencast;;
+    "--video") video;;
+    "--audio") audio;;
+    "--kill") pidof ffmpeg > /dev/null 2>&1 && killrecording || echo "ffmpeg is not running.";;
+    *) ([ -f /tmp/recordingpid ] && asktoend && exit) || askrecording;;
 esac
