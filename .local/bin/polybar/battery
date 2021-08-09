@@ -1,0 +1,57 @@
+#!/bin/bash
+
+for battery in /sys/class/power_supply/BAT?
+do
+    capacity=$(cat "$battery"/capacity) || break
+    batStatus="$(cat "$battery"/status)"
+    if [[ "$batStatus" == [Cc]"harging" ]] || [[ "$batStatus" == [Ff]"ull" ]]; then
+        xbacklight -set 100%
+    fi
+    
+    case "$batStatus" in
+        [Dd]"ischarging" | [Cc]"harging")
+            if [ $capacity -lt 10 ]; then
+                status=""
+                icon="❗"
+            elif [ $capacity -lt 20 ] && [ $capacity -ge 10 ]; then
+                status=""
+                icon="❗"
+                [[ "$batStatus" != [Cc]"harging" ]] &&
+                    dunstify -i battery-level-20-symbolic.symbolic -r 1234 -u critical 'Low battery!' &&
+                    xbacklight -set 1%
+            elif [ $capacity -lt 30 ] && [ $capacity -ge 20 ]; then
+            	status=""
+            elif [ $capacity -lt 40 ] && [ $capacity -ge 30 ]; then
+            	status=""
+            elif [ $capacity -lt 50 ] && [ $capacity -ge 40 ]; then
+            	status=""
+            elif [ $capacity -lt 60 ] && [ $capacity -ge 50 ]; then
+            	status=""
+            elif [ $capacity -lt 70 ] && [ $capacity -ge 60 ]; then
+            	status=""
+            elif [ $capacity -lt 80 ] && [ $capacity -ge 70 ]; then
+            	status=""
+            elif [ $capacity -lt 90 ] && [ $capacity -ge 80 ]; then
+            	status=""
+            else
+            	status=""
+            fi
+
+            if [[ "$(cat "$battery"/status)" = [Cc]"harging" ]]; then
+            	icon="⚡"
+            fi
+            ;;
+        [Ff]"ull")
+            status=""
+            ;;
+        [Uu]"nknown")
+            status=""
+            ;;
+    esac
+
+    # Sometimes capacity is greater than 100, I don't know why but let's fix this
+    [ $capacity -gt 100 ] && capacity=100
+    
+    printf "$status$icon $capacity%%"
+    unset icon
+done | sed 's/ *$//'

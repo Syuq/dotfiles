@@ -1,0 +1,37 @@
+#!/bin/bash
+
+isPlugged(){
+    grep -A4 -ri 'Headphone Playback Switch' /proc/asound/card*/* | grep "Amp-Out vals.*0x00 0x00" -q
+}
+
+if [ "$1" == "--headphone" ]; then
+    logFile="/tmp/headphone.log"
+    [ -f "$logFile" ] || echo "init" > "$logFile"
+
+    while :; do
+        preStatus="$(< $logFile)"
+        curStatus="$(isPlugged && echo 'isPlugged' || echo 'notPlugged')"
+        [ "$preStatus" != "$curStatus" ] && polybar-msg hook volume 1 && echo "$curStatus" > $logFile &&
+        [ "$curStatus" == "isPlugged" ] && dunstify -i audio-headset-symbolic.symbolic -r 1 -u normal 'Headphone plugged in!'
+        sleep 1s
+    done
+    exit 0
+fi
+
+volstat="$(amixer sget Master)"
+
+echo "$volstat" | grep "\[off\]" >/dev/null && printf "🔇\\n" && exit
+
+vol=$(echo "$volstat" | grep -o "\[[0-9]\+%\]" | sed "s/[^0-9]*//g;1q")
+
+if [ "$vol" -gt "70" ]; then
+    icon="🔊"
+elif [ "$vol" -lt "30" ]; then
+    icon="🔈"
+else
+    icon="🔉"
+fi
+
+isPlugged && icon="🎧"
+
+printf "$icon $vol%%"
