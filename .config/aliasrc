@@ -34,7 +34,10 @@ ud() {
 }
 
 mcd() { mkdir -p $1 && cd $1; }
-fb() { $EDITOR $(du -a ~/.local/bin/* | awk '{print $2}' | fzf) ;}
+fb() {
+    binFile=$(du -a ~/.local/bin/* | awk '{print $2}' | fzf)
+    [ -z "$binFile" ] || $EDITOR $binFile
+}
 
 bwin() {
     winboot=$(efibootmgr | grep "Windows Boot Manager" | cut -d'*' -f1 | cut -d't' -f2)
