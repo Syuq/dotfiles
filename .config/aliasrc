@@ -86,3 +86,14 @@ uker() {
     cd
     echo "Updated kernel successfully!"
 }
+
+sudo() {
+    doas -n "$@"
+    if [ "$?" -eq 1 ] && ! doas -t; then
+        if [[ $(tty) == /dev/tty* ]]; then
+            doas "$@"
+        else
+            pass=`dmenu -P` && doas -p "$pass" "$@"
+        fi
+    fi
+}
