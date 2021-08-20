@@ -8,8 +8,8 @@ alias \
     grep="grep --color=auto" \
     diff="diff --color=auto" \
     cl="clear" \
-    sd="sudo openrc-shutdown -p now" \
-    rb="sudo openrc-shutdown -r now" \
+    sd="sudo shutdown -h now" \
+    rb="sudo shutdown -r now" \
     cfv="nvim ~/.config/nvim/init.lua" \
     cfx="nvim ~/.config/X11/xinitrc" \
     cfxp="nvim ~/.config/X11/xprofile" \
