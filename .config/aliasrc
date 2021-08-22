@@ -84,7 +84,7 @@ uker() {
     sudo emerge @module-rebuild
     sudo grub-mkconfig -o /boot/grub/grub.cfg
     cd
-    echo "Updated kernel successfully!"
+    dunstify 'Updated kernel successfullly!'
 }
 
 sudo() {
