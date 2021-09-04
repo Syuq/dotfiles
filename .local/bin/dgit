@@ -1,0 +1,59 @@
+#!/bin/bash
+
+error() { echo -e "$1" && exit; }
+
+[ $EUID -eq 0 ] && error "Do not run this script as root."
+
+flag="$1"
+
+config() {
+    if [[ "$flag" == "-h" ]]; then
+        git --git-dir=$HOME/user/works/repos/dotfiles/ --work-tree=$HOME "$@"
+    else
+        git --git-dir="$gitDir/.git" --work-tree="$gitDir" "$@"
+    fi
+}
+
+while :; do
+    gitDir="`git rev-parse --show-toplevel 2> /dev/null`"
+    [ "$gitDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
+
+    modifiedFiles=(`config ls-files -m`)
+    files=("`for file in "${modifiedFiles[@]}"; do echo "$file" | sed -e 's/^/!: /'; done`")
+
+    if [[ "$flag" != "-h" ]]; then
+        untrackedFiles=(`config ls-files --others --exclude-standard`)
+        files=("$files" "`for file in "${untrackedFiles[@]}"; do echo "$file" | sed -e 's/^/?: /'; done`")
+    fi
+
+    choice=`printf "add\npush\nquit" | dmenu -p "Git"`
+
+    case "$choice" in
+        "add")
+            chosenFiles=(`for file in "${files[@]}"; do
+                [ "$file" = "" ] && continue
+                echo "$file"
+            done | dmenu -p "Add" | cut -d' ' -f2`)
+
+            if [ ${#chosenFiles[@]} -ne 0 ]; then
+                config add "${chosenFiles[@]}"
+
+                commitMsg="`printf "" | dmenu -p "Commit"`"
+                if [ ${#chosenFiles[@]} -eq 1 ]; then
+                    [[ "$commitMsg" = \!* ]] && commitMsg="${commitMsg:1}" ||
+                        commitMsg="${chosenFiles[0]##*/}: $commitMsg"
+                fi
+
+                config commit -m "$commitMsg"
+            fi
+            ;;
+        "push")
+            config push
+            ;;
+        "quit")
+            break
+            ;;
+    esac
+done
+
+exit 0
