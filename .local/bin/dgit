@@ -37,6 +37,7 @@ while :; do
 
             if [ ${#chosenFiles[@]} -ne 0 ]; then
                 config add "${chosenFiles[@]}"
+                [ $? -ne 0 ] && echo "No such file or directory!" && continue
 
                 commitMsg="`printf "" | dmenu -p "Commit"`"
                 if [ ${#chosenFiles[@]} -eq 1 ]; then
