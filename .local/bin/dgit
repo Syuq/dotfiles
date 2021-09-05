@@ -11,13 +11,13 @@ config() {
     if [[ "$flag" == "-h" ]]; then
         git --git-dir="$dotfilesDir" --work-tree=$HOME "$@"
     else
-        git --git-dir="$gitDir/.git" --work-tree="$gitDir" "$@"
+        git --git-dir="$repoDir/.git" --work-tree="$repoDir" "$@"
     fi
 }
 
 while :; do
-    gitDir="`git rev-parse --show-toplevel 2> /dev/null`"
-    [ "$gitDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
+    repoDir="`git rev-parse --show-toplevel 2> /dev/null`"
+    [ "$repoDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
 
     modifiedFiles=(`config ls-files -m`)
     files=("`for file in "${modifiedFiles[@]}"; do echo "$file" | sed -e 's/^/!: /'; done`")
@@ -27,18 +27,22 @@ while :; do
         files=("$files" "`for file in "${untrackedFiles[@]}"; do echo "$file" | sed -e 's/^/?: /'; done`")
     fi
 
-    choice=`printf "add\npush\nquit" | dmenu -p "Git"`
+    choice="`printf "add\npush\nquit" | dmenu -p "Git"`"
 
     case "$choice" in
         "add")
             chosenFiles=(`for file in "${files[@]}"; do
                 [ "$file" = "" ] && continue
-                echo "$file"
+                printf "+all\n$file"
             done | dmenu -p "Add" | cut -d' ' -f2`)
 
             if [ ${#chosenFiles[@]} -ne 0 ]; then
-                config add "${chosenFiles[@]}"
+                if [ "$chosenFiles" = "+all" ]; then
+                    config add "$repoDir/."
+                else
+                    config add "${chosenFiles[@]}"
                 [ $? -ne 0 ] && echo "No such file or directory!" && continue
+                fi
 
                 commitMsg="`printf "" | dmenu -p "Commit"`"
                 if [ ${#chosenFiles[@]} -eq 1 ]; then
