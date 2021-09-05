@@ -5,10 +5,11 @@ error() { echo -e "$1" && exit; }
 [ $EUID -eq 0 ] && error "Do not run this script as root."
 
 flag="$1"
+dotfilesDir="$HOME/user/works/repos/dotfiles/"
 
 config() {
     if [[ "$flag" == "-h" ]]; then
-        git --git-dir=$HOME/user/works/repos/dotfiles/ --work-tree=$HOME "$@"
+        git --git-dir="$dotfilesDir" --work-tree=$HOME "$@"
     else
         git --git-dir="$gitDir/.git" --work-tree="$gitDir" "$@"
     fi
