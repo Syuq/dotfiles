@@ -10,7 +10,6 @@ alias \
     cl="clear" \
     sd="sudo shutdown -h now" \
     rb="sudo shutdown -r now" \
-    cfv="nvim ~/.config/nvim/init.lua" \
     cfx="nvim ~/.config/X11/xinitrc" \
     cfxp="nvim ~/.config/X11/xprofile" \
     cfz="nvim ~/.config/zsh/.zshrc" \
@@ -34,20 +33,29 @@ ud() {
 }
 
 mcd() { mkdir -p $1 && cd $1; }
+
+cfv() {
+    file=$(find ~/.config/nvim -type d -path ~/.config/nvim/.git -prune -o \
+        ! -type d -print | fzf)
+    [ -z "$file" ] || $EDITOR $file
+}
+
 fb() {
-    binFile=$(du -a ~/.local/bin/* | awk '{print $2}' | fzf)
-    [ -z "$binFile" ] || $EDITOR $binFile
+    file=$(du -a ~/.local/bin/* | awk '{print $2}' | fzf)
+    [ -z "$file" ] || $EDITOR $file
 }
 
 bwin() {
-    winboot=$(efibootmgr | grep "Windows Boot Manager" | cut -d'*' -f1 | cut -d't' -f2)
+    winboot=$(efibootmgr | grep "Windows Boot Manager" |
+        cut -d'*' -f1 | cut -d't' -f2)
     sudo efibootmgr --bootnext $winboot && rb
 }
 
 frepo() {
     cd ~/user/works/repos
     dir=$(ls $HOME/user/works/repos | fzf || echo .)
-    [ "$dir" = "code" ] && cd code && cd $(ls $HOME/user/works/repos/code | fzf || echo .) || cd $dir
+    [ "$dir" = "code" ] && cd code && cd $(ls $HOME/user/works/repos/code |
+        fzf || echo .) || cd $dir
 }
 
 faur() {
@@ -55,18 +63,24 @@ faur() {
 }
 
 fparu() { 
-    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
-    ($AUR_HELPER -Fy; $AUR_HELPER -Slq | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -S --needed)
+    uname -r | grep "gentoo" > /dev/null &&
+        echo "This function doesn't work on Gentoo" ||
+    ($AUR_HELPER -Fy; $AUR_HELPER -Slq | fzf --height=100% --multi --preview \
+        '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -S --needed)
 }
 
 fpac() { 
-    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
-    (sudo pacman -Fy; pacman -Slq | fzf --height=100% --multi --preview 'pacman -Si {1}' | xargs -ro sudo pacman -S --needed)
+    uname -r | grep "gentoo" > /dev/null &&
+        echo "This function doesn't work on Gentoo" ||
+    (sudo pacman -Fy; pacman -Slq | fzf --height=100% --multi --preview \
+        'pacman -Si {1}' | xargs -ro sudo pacman -S --needed)
 }
 
 frparu() { 
-    uname -r | grep "gentoo" > /dev/null && echo "This function doesn't work on Gentoo" ||
-    ($AUR_HELPER -Qqe | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -Rns)
+    uname -r | grep "gentoo" > /dev/null &&
+        echo "This function doesn't work on Gentoo" ||
+    ($AUR_HELPER -Qqe | fzf --height=100% --multi --preview \
+        '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -Rns)
 }
 
 sudo() {
