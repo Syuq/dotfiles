@@ -69,24 +69,6 @@ frparu() {
     ($AUR_HELPER -Qqe | fzf --height=100% --multi --preview '$AUR_HELPER -Si {1}' | xargs -ro $AUR_HELPER -Rns)
 }
 
-uker() {
-    uname -r | grep "gentoo" > /dev/null || { echo "This function only works on Gentoo"; exit; }
-    cp /usr/src/linux/.config "$HOME/$(uname -r).config"
-    eselect kernel list
-    echo -n "Choose kernel: "
-    read op
-    sudo eselect kernel set $op
-    cd /usr/src/linux
-    sudo make mrproper
-    sudo cp "$HOME/$(uname -r).config" .config
-    sudo make olddefconfig
-    sudo make -j4 && sudo make modules_install install
-    sudo emerge @module-rebuild
-    sudo grub-mkconfig -o /boot/grub/grub.cfg
-    cd
-    dunstify 'Updated kernel successfullly!'
-}
-
 sudo() {
     doas -n "$@"
     if [ "$?" -eq 1 ] && ! doas -t; then
