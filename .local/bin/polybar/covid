@@ -6,7 +6,9 @@ country="$1"
 [ -z "$country" ] && country="Vietnam"
 
 # Get information about Covid-19 in $country
-info="$(curl -s https://corona.lmao.ninja/v2/countries/ | awk -F'},{' '{ for (i = 1; i < 230; ++i) print $i; }' | grep -i "$country" | awk -F',' '{ for (i = 1; i < 30; ++i) print $i;}')"
+info="$(curl -s https://corona.lmao.ninja/v2/countries/ |
+    awk -F'},{' '{ for (i = 1; i < 230; ++i) print $i; }' |
+    grep -i "$country" | awk -F',' '{ for (i = 1; i < 30; ++i) print $i;}')"
 
 array=($info)
 for i in "${!array[@]}"; do
