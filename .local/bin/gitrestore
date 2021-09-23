@@ -2,36 +2,57 @@
 
 # You don't need this script if you're not me =))
 
-[ $EUID -eq 0 ] && echo "Do not run this script as root." && exit
+error() { echo -e "$1" && exit; }
+
+[ $EUID -eq 0 ] && error "Do not run this script as root."
 
 ssh-keygen -t rsa -b 4096 -C "syaorancode@gmail.com"
 eval "$(ssh-agent -s)"
 ssh-add ~/.ssh/id_rsa
 
 xclip -se c < ~/.ssh/id_rsa.pub
-echo -e "Your ssh public key has been copied to system clipboard.\nPlease add your public key to your github/gitlab. Press Enter when you're done."
+echo "Your ssh public key has been copied to system clipboard.
+Please add your public key to your github/gitlab. Press Enter when you're done."
 read -r
 
-repodir="$HOME/user/works/repos"
+REPO_DIR="${HOME}/user/works/repos"
+rm -rf "${REPO_DIR}"/*
 
-rm -rf "$repodir"/*
+git_repos=(
+git@github.com:justanoobcoder/code.git
+git@github.com:justanoobcoder/dmenu.git
+git@github.com:justanoobcoder/dotfiles.git
+git@github.com:justanoobcoder/dwm.git
+git@github.com:justanoobcoder/files.git
+git@github.com:justanoobcoder/gentoo-overlay.git
+git@github.com:justanoobcoder/gentoo-stuff.git
+git@github.com:justanoobcoder/justanoobcoder.git
+git@github.com:justanoobcoder/nowater.git
+git@github.com:justanoobcoder/OpenDoas.git
+git@gitlab.com:justanoobcoder/SALI.git
+git@gitlab.com:justanoobcoder/SARS.git
+git@github.com:justanoobcoder/st.git
+)
 
-git clone git@gitlab.com:justanoobcoder/SARS.git            "$repodir"/SARS
-git clone git@gitlab.com:justanoobcoder/SALI.git            "$repodir"/SALI
-git clone --bare git@github.com:justanoobcoder/dotfiles.git "$repodir"/dotfiles
-git clone git@github.com:justanoobcoder/nvim.git            "$repodir"/nvim
-git clone git@github.com:justanoobcoder/dwm.git             "$repodir"/dwm
-git clone git@github.com:justanoobcoder/st.git              "$repodir"/st
-git clone git@github.com:justanoobcoder/dmenu.git           "$repodir"/dmenu
-git clone git@github.com:justanoobcoder/gentoo-overlay.git  "$repodir"/gentoo-overlay
-git clone git@github.com:justanoobcoder/code.git            "$repodir"/code
-git clone git@github.com:justanoobcoder/nowater.git         "$repodir"/nowater
+git_clone() {
+    local _repo_name="`basename ${1} | sed 's/\.git//g'`"
+    if [ "${_repo_name}" == "dotfiles" ]; then
+        git clone --bare ${1} ${REPO_DIR}/${_repo_name}
+    else
+        git clone ${1} ${REPO_DIR}/${_repo_name}
+    fi
+}
 
-cd "$repodir"/nowater
+for repo in ${git_repos[@]}; do
+    git_clone ${repo}
+done
+
+cd "${REPO_DIR}"/nowater
 git checkout dev
 
-cd "$repodir"/dotfiles
-git --git-dir=$HOME/user/works/repos/dotfiles/ --work-tree=$HOME config --local status.showUntrackedFiles no
+cd "${REPO_DIR}"/dotfiles
+git --git-dir=${REPO_DIR}/dotfiles/ --work-tree=${HOME} \
+    config --local status.showUntrackedFiles no
 
 cd
 mkdir ~/.config/git
@@ -40,3 +61,5 @@ git config --global user.email "syaorancode@gmail.com"
 git config --global user.name "justanoobcoder"
 git config --global pager.branch false
 git config --global pager.log false
+
+exit 0
