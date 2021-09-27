@@ -41,7 +41,7 @@ cfv() {
 }
 
 fb() {
-    file=$(du -a ~/.local/bin/* | awk '{print $2}' | fzf)
+    file=$(find ~/.local/bin -type f | fzf)
     [ -z "$file" ] || $EDITOR $file
 }
 
