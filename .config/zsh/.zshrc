@@ -22,6 +22,13 @@ compinit
 # Include hidden files in autocomplete:
 _comp_options+=(globdots)
 
+# Use vim keys in tab complete menu:
+bindkey -M menuselect 'h' vi-backward-char
+bindkey -M menuselect 'k' vi-up-line-or-history
+bindkey -M menuselect 'l' vi-forward-char
+bindkey -M menuselect 'j' vi-down-line-or-history
+bindkey -v '^?' backward-delete-char
+
 ## Load zsh plugins
 PLUGINS_DIR="/usr/share/zsh/plugins"
 
@@ -37,13 +44,6 @@ source $PLUGINS_DIR/zsh-system-clipboard/zsh-system-clipboard.zsh 2> /dev/null
 
 # Make zsh switch from insert mode to normal mode quicker
 export KEYTIMEOUT=1
-
-# Use vim keys in tab complete menu:
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
-bindkey -v '^?' backward-delete-char
 
 MODE_CURSOR_VIINS="#00ff00 blinking bar"
 MODE_CURSOR_REPLACE="$MODE_CURSOR_VIINS #ff0000"
