@@ -3,7 +3,7 @@
 # Default program.
 export EDITOR="nvim"
 export TERMINAL="st"
-export BROWSER="brave-browser"
+export BROWSER="opera"
 export AUR_HELPER="paru"
 
 # Some default config directories
