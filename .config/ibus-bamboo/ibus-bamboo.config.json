@@ -1,5 +1,5 @@
 {
-  "InputMethod": "Telex",
+  "InputMethod": "Telex W",
   "InputMethodDefinitions": {
     "Microsoft layout": {
       "!": "_Ă",
@@ -162,11 +162,25 @@
   "OutputCharset": "Unicode",
   "Flags": 7,
   "IBflags": 315760,
-  "InputModeShortcut": "126,1",
+  "Shortcuts": [
+    1,
+    126,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
   "DefaultInputMode": 1,
   "InputModeMapping": {
     "Navigator:Firefox": 1,
+    "Opera:Opera": 4,
     "brave-browser:Brave-browser": 4,
+    "code:Code": 1,
+    "discord:discord": 4,
     "google-chrome:Google-chrome": 1,
     "jetbrains-idea-ce:jetbrains-idea-ce": 3,
     "st-256color:st-256color": 3,
