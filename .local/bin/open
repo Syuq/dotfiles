@@ -21,8 +21,8 @@ case "$ext" in
         mpv "$filename" ;;
     "jpg" | "jpeg" | "png")
         sxiv "$filename" ;;
-	"html")
-		"$BROWSER" "$filename" ;;
+    "html")
+	"$BROWSER" "$filename" ;;
     *)
         echo "Cannot open this file."
 esac
