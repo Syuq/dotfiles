@@ -6,10 +6,13 @@ error() { echo -e "$1" && exit; }
 
 flag="$1"
 dotfilesDir="$HOME/user/works/repos/dotfiles/"
+nvimDir="${HOME}/.config/nvim/"
 
 config() {
     if [[ "$flag" == "-h" ]]; then
         git --git-dir="$dotfilesDir" --work-tree=$HOME "$@"
+    elif [[ "$flag" == "-v" ]]; then
+        git --git-dir="${nvimDir}/.git" --work-tree=${nvimDir} "$@"
     else
         git --git-dir="$repoDir/.git" --work-tree="$repoDir" "$@"
     fi
@@ -20,11 +23,13 @@ while :; do
     [ "$repoDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
 
     modifiedFiles=(`config ls-files -m`)
-    files=("`for file in "${modifiedFiles[@]}"; do echo "$file" | sed -e 's/^/!: /'; done`")
+    files=("`for file in "${modifiedFiles[@]}"; do echo "$file" |
+        sed -e 's/^/!: /'; done`")
 
     if [[ "$flag" != "-h" ]]; then
         untrackedFiles=(`config ls-files --others --exclude-standard`)
-        files=("$files" "`for file in "${untrackedFiles[@]}"; do echo "$file" | sed -e 's/^/?: /'; done`")
+        files=("$files" "`for file in "${untrackedFiles[@]}"; do echo "$file" |
+            sed -e 's/^/?: /'; done`")
     fi
 
     choice="`printf "add\npush\nquit" | dmenu -p "Git"`"
