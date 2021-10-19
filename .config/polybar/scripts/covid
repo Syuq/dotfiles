@@ -24,7 +24,7 @@ done
 output="😷 ${confirmed}(+${inc_confirmed}), 💀 $deaths(+${inc_deaths}), 😀 $recovered(+${inc_recovered})"
 
 # If ${confirmed} is empty, print out covid.log
-[ -z "${confirmed}" ] && cat /tmp/covid.log 2&> /dev/null && exit
+[ -z "${confirmed}" ] && cat /tmp/covid.log 2> /dev/null && exit
 
 printf "${output}" > /tmp/covid.log
 printf "${output}"
