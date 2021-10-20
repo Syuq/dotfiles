@@ -5,6 +5,7 @@ country="$1"
 # Default country is Vietnam if it's not set
 [ -z "${country}" ] && country="Vietnam"
 
+LOG_FILE="/tmp/covid.log"
 API_URL="https://ncovi.vnpt.vn/thongtindichbenh_v2?fbclid=IwAR2lXZ4T3pGJEHJiZqogQJVJUxbKyxe9-PYaOGTykKz8Dgxf-tvMy1jG3kE"
 
 # Get information about Covid-19 in ${country}
@@ -23,10 +24,14 @@ done
 
 output="😷 ${confirmed}(+${inc_confirmed}), 💀 $deaths(+${inc_deaths}), 😀 $recovered(+${inc_recovered})"
 
-# If ${confirmed} is empty, print out covid.log
-[ -z "${confirmed}" ] && cat /tmp/covid.log 2> /dev/null && exit
+# If ${confirmed} is empty (failed to crawl data), print out log file instead
+if [ -z "${confirmed}" ]; then
+    [ -f ${LOG_FILE} ] && cat ${LOG_FILE} 2> /dev/null ||
+        printf "Failed to get covid information!"
+    exit
+fi
 
-printf "${output}" > /tmp/covid.log
+printf "${output}" > ${LOG_FILE}
 printf "${output}"
 
 exit 0
