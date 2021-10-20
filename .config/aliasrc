@@ -89,7 +89,8 @@ sudo() {
         if [[ $(tty) == /dev/tty* ]]; then
             doas "$@"
         else
-            pass=`dmenu -P` && doas -p "$pass" "$@"
+            pass=`rofi -dmenu -password -l 0 -p "Password" 2> /dev/null` && 
+                doas -p "$pass" "$@"
         fi
     fi
 }
