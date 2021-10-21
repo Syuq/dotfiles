@@ -32,14 +32,14 @@ while :; do
             sed -e 's/^/?: /'; done`")
     fi
 
-    choice="`printf "add\npush\nquit" | dmenu -p "Git"`"
+    choice="`printf "add\npush\nquit" | rofi -dmenu -l 3 -p "Git" 2> /dev/null`"
 
     case "$choice" in
         "add")
             chosenFiles=(`for file in "${files[@]}"; do
                 [ "$file" = "" ] && continue
                 printf "+all\n$file"
-            done | dmenu -p "Add" | cut -d' ' -f2`)
+            done | rofi -dmenu -p "Add" 2> /dev/null | cut -d' ' -f2`)
 
             if [ ${#chosenFiles[@]} -ne 0 ]; then
                 if [ "$chosenFiles" = "+all" ]; then
@@ -49,7 +49,7 @@ while :; do
                 [ $? -ne 0 ] && echo "No such file or directory!" && continue
                 fi
 
-                commitMsg="`printf "" | dmenu -p "Commit"`"
+                commitMsg="`printf "" | rofi -dmenu -l 0 -p "Commit" 2> /dev/null`"
                 if [ ${#chosenFiles[@]} -eq 1 ]; then
                     [[ "$commitMsg" = \!* ]] && commitMsg="${commitMsg:1}" ||
                         commitMsg="${chosenFiles[0]##*/}: $commitMsg"
