@@ -9,12 +9,15 @@ dotfilesDir="$HOME/user/works/repos/dotfiles/"
 nvimDir="${HOME}/.config/nvim/"
 
 config() {
-    if [[ "$flag" == "-h" ]]; then
-        git --git-dir="$dotfilesDir" --work-tree=$HOME "$@"
-    elif [[ "$flag" == "-v" ]]; then
+    if [[ "${flag}" == "-h" ]]; then
+        cd ${HOME}
+        git --git-dir="${dotfilesDir}" --work-tree=${HOME} "$@"
+    elif [[ "${flag}" == "-v" ]]; then
+        cd ${nvimDir}
         git --git-dir="${nvimDir}/.git" --work-tree=${nvimDir} "$@"
     else
-        git --git-dir="$repoDir/.git" --work-tree="$repoDir" "$@"
+        cd ${repoDir}
+        git --git-dir="${repoDir}/.git" --work-tree="${repoDir}" "$@"
     fi
 }
 
@@ -23,11 +26,14 @@ while :; do
     [ "$repoDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
 
     modifiedFiles=(`config ls-files -m`)
+    files_size=${#modifiedFiles[@]} # needed to specify amount of lines for rofi to display
     files=("`for file in "${modifiedFiles[@]}"; do echo "$file" |
         sed -e 's/^/!: /'; done`")
 
     if [[ "$flag" != "-h" ]]; then
         untrackedFiles=(`config ls-files --others --exclude-standard`)
+        tmp=${#untrackedFiles[@]}
+        files_size=$((files_size+tmp))
         files=("$files" "`for file in "${untrackedFiles[@]}"; do echo "$file" |
             sed -e 's/^/?: /'; done`")
     fi
@@ -36,10 +42,19 @@ while :; do
 
     case "$choice" in
         "add")
+            if [ ${files_size} -gt 7 ]; then
+                files_size=7
+            elif [ ${files_size} -gt 1 ]; then
+                files_size=$((files_size+1))
+            fi
             chosenFiles=(`for file in "${files[@]}"; do
                 [ "$file" = "" ] && continue
-                printf "+all\n$file"
-            done | rofi -dmenu -p "Add" 2> /dev/null | cut -d' ' -f2`)
+                if [ ${files_size} -eq 1 ]; then
+                    printf "${file}"
+                else
+                    printf "+all\n${file}"
+                fi
+            done | rofi -dmenu -l ${files_size} -p "Add" 2> /dev/null | cut -d' ' -f2`)
 
             if [ ${#chosenFiles[@]} -ne 0 ]; then
                 if [ "$chosenFiles" = "+all" ]; then
