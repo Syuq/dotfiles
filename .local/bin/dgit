@@ -9,16 +9,20 @@ dotfilesDir="$HOME/user/works/repos/dotfiles/"
 nvimDir="${HOME}/.config/nvim/"
 
 config() {
-    if [[ "${flag}" == "-h" ]]; then
-        cd ${HOME}
-        git --git-dir="${dotfilesDir}" --work-tree=${HOME} "$@"
-    elif [[ "${flag}" == "-v" ]]; then
-        cd ${nvimDir}
-        git --git-dir="${nvimDir}/.git" --work-tree=${nvimDir} "$@"
-    else
-        cd ${repoDir}
-        git --git-dir="${repoDir}/.git" --work-tree="${repoDir}" "$@"
-    fi
+    case ${flag} in
+        "-h")
+            cd ${HOME}
+            git --git-dir="${dotfilesDir}" --work-tree=${HOME} "$@"
+            ;;
+        "-v")
+            cd ${nvimDir}
+            git --git-dir="${nvimDir}/.git" --work-tree=${nvimDir} "$@"
+            ;;
+        *)
+            cd ${repoDir}
+            git --git-dir="${repoDir}/.git" --work-tree="${repoDir}" "$@"
+            ;;
+    esac
 }
 
 while :; do
