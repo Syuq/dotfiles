@@ -26,7 +26,7 @@ while :; do
     [ "$repoDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
 
     modifiedFiles=(`config ls-files -m`)
-    files_size=${#modifiedFiles[@]} # needed to specify amount of lines for rofi to display
+    files_size=${#modifiedFiles[@]}
     files=("`for file in "${modifiedFiles[@]}"; do echo "$file" |
         sed -e 's/^/!: /'; done`")
 
@@ -38,15 +38,10 @@ while :; do
             sed -e 's/^/?: /'; done`")
     fi
 
-    choice="`printf "add\npush\nquit" | rofi -dmenu -l 3 -p "Git" 2> /dev/null`"
+    choice="`printf "add\npush\nquit" | rofi -dmenu -p "Git" 2> /dev/null`"
 
     case "$choice" in
         "add")
-            if [ ${files_size} -gt 7 ]; then
-                files_size=7
-            elif [ ${files_size} -gt 1 ]; then
-                files_size=$((files_size+1))
-            fi
             chosenFiles=(`for file in "${files[@]}"; do
                 [ "$file" = "" ] && continue
                 if [ ${files_size} -eq 1 ]; then
@@ -54,7 +49,7 @@ while :; do
                 else
                     printf "+all\n${file}"
                 fi
-            done | rofi -dmenu -l ${files_size} -p "Add" 2> /dev/null | cut -d' ' -f2`)
+            done | rofi -dmenu -p "Add" -matching fuzzy 2> /dev/null | cut -d' ' -f2`)
 
             if [ ${#chosenFiles[@]} -ne 0 ]; then
                 if [ "$chosenFiles" = "+all" ]; then
