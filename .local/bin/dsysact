@@ -8,7 +8,8 @@ logout | kill -TERM $(pidof -s dwm)
 reboot | sudo shutdown -r now
 shutdown | sudo shutdown -h now"
 
-choice="$(echo "$optandcmd" | cut -f 1 -d '|' | dmenu)" || exit
+choice="$(echo "$optandcmd" | cut -f 1 -d '|' |
+    rofi -dmenu -p 'Option:' 2> /dev/null)" || exit
 
 `echo "$optandcmd" | grep "^$choice" | cut -f 2 -d '|'`
 
