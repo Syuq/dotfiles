@@ -2,10 +2,8 @@
 
 error() { echo -e "$1" && exit; }
 
-[ $EUID -eq 0 ] && error "Do not run this script as root."
-
-flag="$1"
-dotfilesDir="$HOME/user/works/repos/dotfiles/"
+flag="${1}"
+dotfilesDir="${HOME}/user/works/repos/dotfiles/"
 nvimDir="${HOME}/.config/nvim/"
 
 config() {
@@ -25,13 +23,39 @@ config() {
     esac
 }
 
+git_clone() {
+    local choice="`printf "Clipboard\nEnter user, repository (github only)" |
+        rofi -dmenu -p "Git" 2> /dev/null`"
+    case "${choice}" in
+        "Clipboard")
+            git clone "$(xclip -o)"
+            ;;
+        "Enter user, repository (github only)")
+            local github_user="`printf "" | rofi -dmenu -l 0 -p "User:" 2> /dev/null`"
+            local repos=(`curl -Ls "https://api.github.com/users/${github_user}/repos?per_page=100" -m 5 |
+                grep -oP 'git@.*(?=.git)' | cut -d '/' -f 2`)
+            [ ${#repos[@]} -eq 0 ] &&
+                error "Cannot find any repository of ${github_user}!\nCheck username or try again later."
+            local chosen_repo=`for repo in "${repos[@]}"; do echo "${repo}"; done |
+                rofi -dmenu -p "Repository (${#repos[@]}):" -matching fuzzy 2> /dev/null`
+            [ "${chosen_repo}" != "" ] &&
+                git clone "https://github.com/${github_user}/${chosen_repo}.git"
+            ;;
+        *)
+            error "Something went wrong!"
+            ;;
+    esac
+    exit 0
+}
+
 while :; do
     repoDir="`git rev-parse --show-toplevel 2> /dev/null`"
-    [ "$repoDir" = "" ] && [ "$1" = "" ] && error "Cannot detect .git folder!"
+    [ "${repoDir}" = "" ] && [ "${1}" = "" ] && error "Cannot detect .git folder!"
+    [ "${1}" = "-c" ] && git_clone
 
     modifiedFiles=(`config ls-files -m`)
     files_size=${#modifiedFiles[@]}
-    files=("`for file in "${modifiedFiles[@]}"; do echo "$file" |
+    files=("`for file in "${modifiedFiles[@]}"; do echo "${file}" |
         sed -e 's/^/!: /'; done`")
 
     if [[ "$flag" != "-h" ]]; then
