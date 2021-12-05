@@ -4,20 +4,22 @@
 # anywhere without writing whole path.
 export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 
-xset r rate 300 50          # speed xrate up
-numlockx                    # turn on numlock key
-nm-applet &                 # networkmanager applet
-blueman-applet &            # bluetooth applet
-picom -b                    # for transparency
-dunst &                     # notification server
-ibus-daemon -drx            # start ibus daemon
-udiskie -s &                # auto mount USB
+run() { command -v ${1} > /dev/null && ${@}; }
+
+run xset r rate 300 50          # speed xrate up
+run numlockx                    # turn on numlock key
+run nm-applet &                 # networkmanager applet
+run blueman-applet &            # bluetooth applet
+run picom -b                    # for transparency
+run dunst &                     # notification server
+run ibus-daemon -drx            # start ibus daemon
+run udiskie -s &                # auto mount USB
 
 # make CapsLock a Ctrl key, press both Shift keys to enable/disable CapsLock
-setxkbmap -option ctrl:nocaps,shift:both_capslock
+run setxkbmap -option ctrl:nocaps,shift:both_capslock
 
 # if CapsLock key is pressed once, it's Esc key
-killall xcape 2>/dev/null ; xcape
+killall xcape 2>/dev/null ; run xcape
 
 # change wallpaper every 10 minutes
-nowater -T
+run nowater -f /home/syaoran/user/pictures/wallpaper.jpg
