@@ -1,108 +1,155 @@
 #!/bin/bash
 
+# This script needs curl, rofi, xclip and git (of course) to work
+
+# Global const
+DOTFILES_DIR="${HOME}/user/works/repos/dotfiles/"
+NVIM_DIR="${HOME}/.config/nvim/"
+DATA_DIR="${HOME}/.cache/dgit"
+
 error() { echo -e "$1" && exit; }
 
-flag="${1}"
-dotfilesDir="${HOME}/user/works/repos/dotfiles/"
-nvimDir="${HOME}/.config/nvim/"
+check_cmd() {
+    for cmd in "${@}"; do
+        command -v "${cmd}" > /dev/null ||
+            error "Missing ${cmd} command!"
+    done
+}
+
+usage() {
+    echo "Usage: dgit <option> <argument>
+                    [-h | --home]
+                    [-v | --vim]
+                    [-c | --clone]
+                    [-d | --directory <git repo directory>]
+                    [--help]"
+    exit
+}
 
 config() {
-    case ${flag} in
-        "-h")
-            cd ${HOME}
-            git --git-dir="${dotfilesDir}" --work-tree=${HOME} "$@"
-            ;;
-        "-v")
-            cd ${nvimDir}
-            git --git-dir="${nvimDir}/.git" --work-tree=${nvimDir} "$@"
-            ;;
-        *)
-            cd ${repoDir}
-            git --git-dir="${repoDir}/.git" --work-tree="${repoDir}" "$@"
-            ;;
-    esac
+    if [[ "${repo_dir}" == "home" ]]; then
+        cd "${HOME}"
+        git --git-dir="${DOTFILES_DIR}" --work-tree=${HOME} "$@"
+    elif [[ "${repo_dir}" == "vim" ]]; then
+        cd "${NVIM_DIR}"
+        git --git-dir="${NVIM_DIR}/.git" --work-tree=${NVIM_DIR} "$@"
+    else
+        cd "${repo_dir}"
+        git --git-dir="${repo_dir}/.git" --work-tree="${repo_dir}" "$@"
+    fi
+}
+
+git_add() {
+    local chosen_files=(`for file in "${files[@]}"; do
+        [ -z "${file}" ] && continue
+        if [ ${files_size} -eq 1 ]; then
+            printf "${file}"
+        else
+            printf "+all\n${file}"
+        fi
+    done | rofi -dmenu -p "Add" -matching fuzzy 2> /dev/null | cut -d' ' -f2`)
+
+    if [ ${#chosen_files[@]} -ne 0 ]; then
+        if [ "${chosen_files}" = "+all" ]; then
+            config add "${repo_dir}/."
+        else
+            config add "${chosen_files[@]}"
+        [ $? -ne 0 ] && echo "No such file or directory!" && continue
+        fi
+
+        local commit_msg="`printf "" | rofi -dmenu -l 0 -p "Commit" 2> /dev/null`"
+        if [ ${#chosen_files[@]} -eq 1 ]; then
+            [[ "${commit_msg}" = \!* ]] && commit_msg="${commit_msg:1}" ||
+                commit_msg="${chosen_files[0]##*/}: ${commit_msg}"
+        fi
+
+        config commit -m "${commit_msg}"
+    fi
 }
 
 git_clone() {
     local choice="`printf "Clipboard\nEnter user, repository (github only)" |
         rofi -dmenu -p "Git" 2> /dev/null`"
+
     case "${choice}" in
         "Clipboard")
-            git clone "$(xclip -o)"
-            ;;
+            git clone "$(xclip -o)" ;;
         "Enter user, repository (github only)")
-            local github_user="`printf "" | rofi -dmenu -l 0 -p "User:" 2> /dev/null`"
+            local github_users=(`[ -f "${DATA_DIR}/githubusers" ] &&
+                cat "${DATA_DIR}/githubusers" | sort`)
+
+            local github_user="`for user in "${github_users[@]}"; do echo "${user}"; done |
+                rofi -dmenu -l 10 -p "User:" -i  2> /dev/null`"
+
+            [ -z "${github_user}" ] && exit 0
             local repos=(`curl -Ls "https://api.github.com/users/${github_user}/repos?per_page=100" -m 5 |
                 grep -oP 'git@.*(?=.git)' | cut -d '/' -f 2`)
+
             [ ${#repos[@]} -eq 0 ] &&
                 error "Cannot find any repository of ${github_user}!\nCheck username or try again later."
+
+            [ -d "${DATA_DIR}" ] || mkdir "${DATA_DIR}"
+            echo "${github_user}" >> "${DATA_DIR}/githubusers"
             local chosen_repo=`for repo in "${repos[@]}"; do echo "${repo}"; done |
                 rofi -dmenu -p "Repository (${#repos[@]}):" -matching fuzzy 2> /dev/null`
+
             [ "${chosen_repo}" != "" ] &&
                 git clone "https://github.com/${github_user}/${chosen_repo}.git"
             ;;
+        "")
+            exit 0 ;;
         *)
-            error "Something went wrong!"
-            ;;
+            error "Invalid input!" ;;
     esac
     exit 0
 }
 
-while :; do
-    repoDir="`git rev-parse --show-toplevel 2> /dev/null`"
-    [ "${repoDir}" = "" ] && [ "${1}" = "" ] && error "Cannot detect .git folder!"
-    [ "${1}" = "-c" ] && git_clone
+main() {
+    check_cmd rofi curl xclip git
 
-    modifiedFiles=(`config ls-files -m`)
-    files_size=${#modifiedFiles[@]}
-    files=("`for file in "${modifiedFiles[@]}"; do echo "${file}" |
-        sed -e 's/^/!: /'; done`")
+    PARSED_ARGUMENTS=$(getopt -a -n $0 -o hvcd: --long home,vim,clone,directory: -- "$@")
+    [ $? -ne 0 ] && usage
 
-    if [[ "$flag" != "-h" ]]; then
-        untrackedFiles=(`config ls-files --others --exclude-standard`)
-        tmp=${#untrackedFiles[@]}
-        files_size=$((files_size+tmp))
-        files=("$files" "`for file in "${untrackedFiles[@]}"; do echo "$file" |
-            sed -e 's/^/?: /'; done`")
-    fi
+    while :; do
+        case "${1}" in
+            -h | --home) repo_dir="home"; shift ;;
+            -v | --vim)  repo_dir="vim" ; shift ;;
+            -c | --clone) git_clone; shift ;;
+            -d | --directory) repo_dir="${2}"; shift 2;;
+            -- | '') shift; break ;;
+            *) echo "Unexpected option: ${1} is not a valid option."; usage ;;
+        esac
+    done
+    [ -z "${repo_dir}" ] && repo_dir="`git rev-parse --show-toplevel 2> /dev/null`"
+    [ -z "${repo_dir}" ] && error "Cannot detect .git folder!"
 
-    choice="`printf "add\npush\nquit" | rofi -dmenu -p "Git" 2> /dev/null`"
+    while :; do
+        modified_files=(`config ls-files -m`)
+        files_size=${#modified_files[@]}
+        files=("`for file in "${modified_files[@]}"; do echo "${file}" |
+            sed -e 's/^/!: /'; done`")
 
-    case "$choice" in
-        "add")
-            chosenFiles=(`for file in "${files[@]}"; do
-                [ "$file" = "" ] && continue
-                if [ ${files_size} -eq 1 ]; then
-                    printf "${file}"
-                else
-                    printf "+all\n${file}"
-                fi
-            done | rofi -dmenu -p "Add" -matching fuzzy 2> /dev/null | cut -d' ' -f2`)
+        if [[ "${repo_dir}" != "home" ]]; then
+            untracked_files=(`config ls-files --others --exclude-standard`)
+            tmp=${#untracked_files[@]}
+            files_size=$((files_size+tmp))
+            files=("${files}" "`for file in "${untracked_files[@]}"; do echo "${file}" |
+                sed -e 's/^/?: /'; done`")
+        fi
 
-            if [ ${#chosenFiles[@]} -ne 0 ]; then
-                if [ "$chosenFiles" = "+all" ]; then
-                    config add "$repoDir/."
-                else
-                    config add "${chosenFiles[@]}"
-                [ $? -ne 0 ] && echo "No such file or directory!" && continue
-                fi
+        choice="`printf "add\npush\nquit" | rofi -dmenu -p "Git" 2> /dev/null`"
 
-                commitMsg="`printf "" | rofi -dmenu -l 0 -p "Commit" 2> /dev/null`"
-                if [ ${#chosenFiles[@]} -eq 1 ]; then
-                    [[ "$commitMsg" = \!* ]] && commitMsg="${commitMsg:1}" ||
-                        commitMsg="${chosenFiles[0]##*/}: $commitMsg"
-                fi
+        case "${choice}" in
+            "add")
+                git_add ;;
+            "push")
+                config push ;;
+            "quit")
+                break ;;
+        esac
+    done
 
-                config commit -m "$commitMsg"
-            fi
-            ;;
-        "push")
-            config push
-            ;;
-        "quit")
-            break
-            ;;
-    esac
-done
+    exit 0
+}
 
-exit 0
+main "${@}"
