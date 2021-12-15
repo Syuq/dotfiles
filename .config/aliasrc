@@ -10,14 +10,14 @@ alias \
     cl="clear" \
     sd="sudo shutdown -h now" \
     rb="sudo shutdown -r now" \
-    cfx="nvim ~/.config/X11/xinitrc" \
-    cfxp="nvim ~/.config/X11/xprofile" \
-    cfz="nvim ~/.config/zsh/.zshrc" \
-    cfzp="nvim ~/.config/zsh/.zprofile" \
-    cfze="nvim ~/.config/zsh/.zshenv" \
-    cfa="nvim ~/.config/aliasrc" \
-    cfp="nvim ~/.config/polybar/config" \
-    snvim="sudo nvim" \
+    cfx="$EDITOR ~/.config/X11/xinitrc" \
+    cfxp="$EDITOR ~/.config/X11/xprofile" \
+    cfz="$EDITOR ~/.config/zsh/.zshrc" \
+    cfzp="$EDITOR ~/.config/zsh/.zprofile" \
+    cfze="$EDITOR ~/.config/zsh/.zshenv" \
+    cfa="$EDITOR ~/.config/aliasrc" \
+    cfp="$EDITOR ~/.config/polybar/config" \
+    snvim="sudo $EDITOR" \
     cdu="cd /run/media/$USER" \
     wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"' \
     yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"' \
