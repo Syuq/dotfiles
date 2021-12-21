@@ -89,7 +89,9 @@ git_clone() {
                 error "Cannot find any repository of ${github_user}!\nCheck username or try again later."
 
             [ -d "${DATA_DIR}" ] || mkdir "${DATA_DIR}"
-            echo "${github_user}" >> "${DATA_DIR}/githubusers"
+            if ! printf '%s\n' "${github_users[@]}" | fgrep -qx "${github_user}"; then
+                echo "${github_user}" >> "${DATA_DIR}/githubusers"
+            fi
             local chosen_repo=`for repo in "${repos[@]}"; do echo "${repo}"; done |
                 rofi -dmenu -p "Repository (${#repos[@]}):" -matching fuzzy 2> /dev/null`
 
