@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# This script needs maim, xdotool, xclip, dmenu to work
+# This script needs maim, xdotool, xclip, rofi to work
 
-# This script will let you choose screenshot option via dmenu
+# This script will let you choose screenshot option via rofi
 # Usage:
 # `an area`: screenshot of selected area (left click and drag the mouse)
 # `current window`: screenshot of current focus window
@@ -62,7 +62,7 @@ main() {
     [ "$1" = "--full" ] && fullScreen && exit 0
     
     case "$(for i in "${options[@]}"; do echo "$i"; done | \
-            dmenu -l ${#options[@]} -p "Choose a screenshot option:")" in
+            rofi -dmenu -l ${#options[@]} -p "Choose a screenshot option:")" in
         "${options[0]}") anArea ;;
         "${options[1]}") currentWindow ;;
         "${options[2]}") fullScreen ;;
