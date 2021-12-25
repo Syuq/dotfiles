@@ -1,7 +1,7 @@
 # Default program.
 set -gx EDITOR nvim
 set -gx TERMINAL st
-set -gx BROWSER opera
+set -gx BROWSER microsoft-edge-stable
 set -gx AUR_HELPER paru
 
 # Some default config directories
