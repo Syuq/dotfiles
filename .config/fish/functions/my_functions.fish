@@ -97,9 +97,10 @@ function sv
                 [ $status -ne 0 ] && echo "Permission denied!" && return
             end
             $EDITOR /tmp/"$FILE"
-            diff "$argv[1]" /tmp/"$FILE" > /dev/null 2>&1 || cat /tmp/"$FILE" |
-                doas tee "$argv[1]" > /dev/null
-            rm /tmp/"$FILE"
+            if ! diff "$argv[1]" /tmp/"$FILE" > /dev/null 2>&1
+                [ -f /tmp/"$FILE" ] && cat /tmp/"$FILE" | doas tee "$argv[1]" > /dev/null
+            end
+            rm -f /tmp/"$FILE"
         end
     end
 end
