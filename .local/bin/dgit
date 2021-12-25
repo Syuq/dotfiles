@@ -73,7 +73,7 @@ git_clone() {
 
     case "${choice}" in
         "Clipboard")
-            git clone "$(xclip -o)" ;;
+            git clone --depth 1 "$(xclip -o)" ;;
         "Enter user, repository (github only)")
             local github_users=(`[ -f "${DATA_DIR}/githubusers" ] &&
                 cat "${DATA_DIR}/githubusers" | sort`)
@@ -96,7 +96,7 @@ git_clone() {
                 rofi -dmenu -p "Repository (${#repos[@]}):" -matching fuzzy 2> /dev/null`
 
             [ "${chosen_repo}" != "" ] &&
-                git clone "https://github.com/${github_user}/${chosen_repo}.git"
+                git clone --depth 1 "https://github.com/${github_user}/${chosen_repo}.git"
             ;;
         "")
             exit 0 ;;
