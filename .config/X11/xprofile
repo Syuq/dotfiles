@@ -2,7 +2,7 @@
 
 # Adds ~/.local/bin and its subdirectories to $PATH. This will help you run scripts which are in these folders
 # anywhere without writing whole path.
-export PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
+export PATH="$PATH:$HOME/.local/share/npm/bin:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
 
 run() { command -v ${1} > /dev/null && ${@}; }
 
@@ -14,6 +14,7 @@ run picom -b                    # for transparency
 run dunst &                     # notification server
 run ibus-daemon -drx            # start ibus daemon
 run udiskie -s &                # auto mount USB
+run greenclip daemon &          # run clipboard server daemon
 
 # make CapsLock a Ctrl key, press both Shift keys to enable/disable CapsLock
 run setxkbmap -option ctrl:nocaps,shift:both_capslock
