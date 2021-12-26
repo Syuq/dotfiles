@@ -6,7 +6,17 @@ if type -q exa
 end
 
 if type -q nvim
-    alias vim nvim
+    alias v nvim
+else if type -q vim
+    alias v vim
+else if type -q vi
+    alias v vi
+end
+
+if type -q edit
+    alias sv "sudo edit"
+else if type -q sudoedit
+    alias sv "sudoedit"
 end
 
 alias grep "grep --color=auto"
@@ -22,7 +32,6 @@ alias cfzp "$EDITOR ~/.config/zsh/.zprofile"
 alias cfze "$EDITOR ~/.config/zsh/.zshenv"
 alias cfa "$EDITOR ~/.config/aliasrc"
 alias cfp "$EDITOR ~/.config/polybar/config"
-alias sv "sudo edit"
 alias cdu "cd /run/media/$USER"
 alias wget 'wget --hsts-file "$XDG_CACHE_HOME/wget-hsts"'
 alias yarn 'yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
