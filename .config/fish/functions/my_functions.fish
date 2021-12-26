@@ -84,23 +84,3 @@ if type -q doas
         end 
     end
 end
-
-function sv
-    if type -q sudoedit
-        sudoedit "$argv[1]"
-    else if type -q doas
-        set FILE (basename $argv[1])
-        doas echo -n
-        if [ $status -eq 0 ]
-            if [ -f "$argv[1]" ]
-                cp -f "$argv[1]" /tmp/"$FILE" 2> /dev/null
-                [ $status -ne 0 ] && echo "Permission denied!" && return
-            end
-            $EDITOR /tmp/"$FILE"
-            if ! diff "$argv[1]" /tmp/"$FILE" > /dev/null 2>&1
-                [ -f /tmp/"$FILE" ] && cat /tmp/"$FILE" | doas tee "$argv[1]" > /dev/null
-            end
-            rm -f /tmp/"$FILE"
-        end
-    end
-end
