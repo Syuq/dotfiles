@@ -22,7 +22,7 @@ alias cfzp "$EDITOR ~/.config/zsh/.zprofile"
 alias cfze "$EDITOR ~/.config/zsh/.zshenv"
 alias cfa "$EDITOR ~/.config/aliasrc"
 alias cfp "$EDITOR ~/.config/polybar/config"
-alias snvim "sudo $EDITOR"
+alias sv "sudo edit"
 alias cdu "cd /run/media/$USER"
 alias wget 'wget --hsts-file "$XDG_CACHE_HOME/wget-hsts"'
 alias yarn 'yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"'
