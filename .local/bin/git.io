@@ -1,17 +1,24 @@
 #!/bin/bash
 
 # This is a shortening url CLI for github
+# Optional: install xclip or xsel for copy-to-clipboard feature
 
-error() { echo -e "$1" && exit; }
+TMP_FILE="/tmp/git.io.tmp"
 
-[ $EUID -eq 0 ] && error "Do not run this script as root."
+error() { echo -e "${1}" && exit 1; }
 
-_tmpfile="/tmp/git.io.tmp"
-_curl_cmd=(curl -s https://git.io/ -i)
+check_command() { command -v "${1}" > /dev/null; }
 
-checkInternet() {
+check_dependency() {
+    while [ -n "${1}" ]; do
+        check_command "${1}" || error "This script required ${1} to work, so install it first!"
+        shift
+    done
+}
+
+check_internet() {
     if which wget > /dev/null; then
-        wget --quiet --spider google.com || { echo "No internet!"; exit; }
+        wget --quiet --spider google.com || error "No internet!"
     fi
 }
 
@@ -23,37 +30,78 @@ usage() {
     exit
 }
 
-PARSED_ARGUMENTS=$(getopt -a -n $0 -o l:c:h --long link:,code:,help -- "$@")
-[ $? -ne 0 ] && usage
+get_check_status() {
+    local status="$(grep "Status" "${TMP_FILE}" | cut -d' ' -f3)"
+    if cat "${TMP_FILE}" | grep -q "Invalid url"; then
+        error "Invalid URL"
+    elif cat "${TMP_FILE}" | grep -q "Must be a GitHub.com"; then
+        error "Your URL is not a github URL."
+    elif cat "${TMP_FILE}" | grep -q "existing"; then
+        error "The code ${code} is already being used!\nPlease choose a different one."
+    elif [ "${status}" != "Created" ]; then
+        error "Invalid URL"
+    fi
+}
 
-while :; do
-    case "${1}" in
-        -l | --link)	_link=${2} ; shift 2 ;;
-        -c | --code)	_code=${2} ; shift 2 ;;
-        -h | --help)	usage ;;
-        -- | '')        shift; break ;;
-        *) echo "Unexpected option: $1 is not a valid option." ; usage ;;
-    esac
-done
+xclip_xsel() {
+    if check_command xclip; then
+        printf "${shortened_url}" | xclip -se c 2> /dev/null
+    elif check_command xsel; then
+        printf "${shortened_url}" | xsel --clipboard 2> /dev/null
+    else
+        exit 0
+    fi
+    echo "The shortened URL is copied to your clipboard!"
+}
 
-[ -z "$_link" ] && _link="$(command -v xclip > /dev/null && xclip -o)" ; _curl_cmd+=( -F url="$_link")
-[ -n "$_code" ] && _curl_cmd+=( -F code="$_code")
+main() {
+    check_dependency wget curl
 
-checkInternet
-"${_curl_cmd[@]}" | sed -e "s/\r//g" > "$_tmpfile"                # use sed to get rid of annoying ^M character
+    PARSEDARGUMENTS=$(getopt -a -n ${0} -o l:c:h --long link:,code:,help -- "$@")
+    [ $? -ne 0 ] && usage
 
-_status="$(grep "Status" "$_tmpfile" | cut -d' ' -f3)"
-[ "$_status" != "Created" ] && echo "Your URL is not a github URL." && exit
-_location="$(grep "Location" "$_tmpfile" | cut -d' ' -f2)"
+    while :; do
+        case "${1}" in
+            -l | --link)    link=${2} ; shift 2 ;;
+            -c | --code)    code=${2} ; shift 2 ;;
+            -h | --help)    usage ;;
+            -- | '')        shift; break ;;
+            *) echo "Unexpected option: ${1} is not a valid option." ; usage ;;
+        esac
+    done
 
-_code2="$(echo "$_location" | cut -d'/' -f4)"
+    local curl_cmd=(curl -s https://git.io/ -i)
+    if [ -z "${link}" ]; then
+        if check_command xclip; then
+            link="`xclip -o`"
+        elif check_command xsel; then
+            link="`xsel -o`"
+        else
+            error "Must supply a github link!"
+        fi
+    fi
+    curl_cmd+=( -F url="${link}")
+    [ -n "${code}" ] && curl_cmd+=( -F code="${code}")
 
-if [ -n "$_code" ] && [ "$_code2" != "$_code" ]; then
-    echo "Sorry. This URL has already been set to $_location"
-else
-    echo "Your shortened URL: $_location"
-fi
+    check_internet
 
-command -v xclip > /dev/null && printf "$_location" | xclip -se c 2> /dev/null && echo "The shortened URL is copied to your clipboard!"
+    # use sed to get rid of annoying ^M character
+    "${curl_cmd[@]}" | sed -e "s/\r//g" > "${TMP_FILE}"
 
-exit 0
+    get_check_status
+    shortened_url="$(grep "Location" "${TMP_FILE}" | cut -d' ' -f2)"
+
+    real_code="$(echo "${shortened_url}" | cut -d'/' -f4)"
+
+    if [ -n "${code}" ] && [ "${real_code}" != "${code}" ]; then
+        echo "Sorry. This URL has already been set to ${shortened_url}"
+    else
+        echo "Your shortened URL: ${shortened_url}"
+    fi
+
+    xclip_xsel
+
+    exit 0
+}
+
+main "$@"
