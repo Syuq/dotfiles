@@ -47,7 +47,7 @@ xclip_xsel() {
     if check_command xclip; then
         printf "${shortened_url}" | xclip -se c 2> /dev/null
     elif check_command xsel; then
-        printf "${shortened_url}" | xsel --clipboard 2> /dev/null
+        printf "${shortened_url}" | xsel -b 2> /dev/null
     else
         exit 0
     fi
