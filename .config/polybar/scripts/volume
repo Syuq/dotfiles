@@ -11,8 +11,13 @@ if [ "$1" == "--headphone" ]; then
     while :; do
         preStatus="$(< $logFile)"
         curStatus="$(isPlugged && echo 'isPlugged' || echo 'notPlugged')"
-        [ "$preStatus" != "$curStatus" ] && polybar-msg hook volume 1 && echo "$curStatus" > $logFile &&
-        [ "$curStatus" == "isPlugged" ] && dunstify -i audio-headset-symbolic.symbolic -r 1 -u normal 'Headphone plugged in!'
+        if [ "$preStatus" != "$curStatus" ]; then
+            polybar-msg hook volume 1
+            echo "$curStatus" > $logFile
+            if [ "$curStatus" == "isPlugged" ] && [ "$preStatus" != "init" ]; then
+                dunstify -i audio-headset-symbolic.symbolic -r 1 -u normal 'Headphone plugged in!'
+            fi
+        fi
         sleep 1s
     done
     exit 0
