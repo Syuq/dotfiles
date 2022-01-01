@@ -18,3 +18,4 @@ set fish_cursor_replace_one underscore
 set fish_cursor_visual block
 
 neofetch
+starship init fish | source
