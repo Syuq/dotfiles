@@ -188,7 +188,7 @@ done
 
 # final operations before compilation
 rest=()
-flags=()
+flags=(-Wno-unused-result)
 for f in "${comp[@]}"; do
     # skip empty elements
     [[ -z "$f" ]] && break
