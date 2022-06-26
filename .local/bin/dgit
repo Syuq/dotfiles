@@ -145,7 +145,7 @@ main() {
             "add")
                 git_add ;;
             "push")
-                config push ;;
+                config push -u origin master ;;
             "quit")
                 break ;;
         esac
