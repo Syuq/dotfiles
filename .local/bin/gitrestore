@@ -33,6 +33,7 @@ git@github.com:justanoobcoder/OpenDoas.git
 git@gitlab.com:justanoobcoder/SALI.git
 git@gitlab.com:justanoobcoder/SARS.git
 git@github.com:justanoobcoder/st.git
+git@github.com:justanoobcoder/nmtool.git
 )
 
 git_clone() {
