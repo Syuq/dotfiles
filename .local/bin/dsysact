@@ -3,8 +3,13 @@
 # Make shutdown command run without asking for
 # password before running this script
 
+#optandcmd="\
+#logout | kill -TERM $(pidof -s dwm)
+#reboot | sudo shutdown -r now
+#shutdown | sudo shutdown -h now"
+
 optandcmd="\
-logout | kill -TERM $(pidof -s dwm)
+logout | qtile cmd-obj -o cmd -f shutdown
 reboot | sudo shutdown -r now
 shutdown | sudo shutdown -h now"
 
