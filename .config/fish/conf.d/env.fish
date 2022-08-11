@@ -1,6 +1,6 @@
 # Default program.
 set -gx EDITOR nvim
-set -gx TERMINAL st
+set -gx TERMINAL alacritty
 set -gx BROWSER microsoft-edge-stable
 set -gx AUR_HELPER paru
 
