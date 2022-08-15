@@ -23,4 +23,4 @@ run setxkbmap -option ctrl:nocaps,shift:both_capslock
 killall xcape 2>/dev/null ; run xcape
 
 # change wallpaper every 10 minutes
-run nowater -f /home/syaoran/user/pictures/wallpaper.jpg
+run feh --bg-scale --no-fehbg /home/justanoobcoder/user/pictures/wallpaper.jpg
