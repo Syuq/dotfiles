@@ -176,6 +176,7 @@
   ],
   "DefaultInputMode": 1,
   "InputModeMapping": {
+    "Alacritty:Alacritty": 3,
     "Navigator:Firefox": 1,
     "Opera:Opera": 4,
     "brave-browser:Brave-browser": 4,
