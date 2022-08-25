@@ -2,12 +2,12 @@
 # VERSION: 3.0
 SETUVAR ZO_CMD:zo
 SETUVAR Z_CMD:z
-SETUVAR Z_DATA:/home/syaoran/\x2elocal/share/z/data
-SETUVAR Z_DATA_DIR:/home/syaoran/\x2elocal/share/z
-SETUVAR Z_EXCLUDE:\x5e/home/syaoran\x24
+SETUVAR Z_DATA:/home/justanoobcoder/\x2elocal/share/z/data
+SETUVAR Z_DATA_DIR:/home/justanoobcoder/\x2elocal/share/z
+SETUVAR Z_EXCLUDE:\x5e/home/justanoobcoder\x24
 SETUVAR __fish_initialized:3400
-SETUVAR _fisher_jethrokuan_2F_z_files:/home/syaoran/\x2econfig/fish/functions/__z\x2efish\x1e/home/syaoran/\x2econfig/fish/functions/__z_add\x2efish\x1e/home/syaoran/\x2econfig/fish/functions/__z_clean\x2efish\x1e/home/syaoran/\x2econfig/fish/functions/__z_complete\x2efish\x1e/home/syaoran/\x2econfig/fish/conf\x2ed/z\x2efish
-SETUVAR _fisher_jorgebucaran_2F_fisher_files:/home/syaoran/\x2econfig/fish/functions/fisher\x2efish\x1e/home/syaoran/\x2econfig/fish/completions/fisher\x2efish
+SETUVAR _fisher_jethrokuan_2F_z_files:/home/justanoobcoder/\x2econfig/fish/functions/__z\x2efish\x1e/home/justanoobcoder/\x2econfig/fish/functions/__z_add\x2efish\x1e/home/justanoobcoder/\x2econfig/fish/functions/__z_clean\x2efish\x1e/home/justanoobcoder/\x2econfig/fish/functions/__z_complete\x2efish\x1e/home/justanoobcoder/\x2econfig/fish/conf\x2ed/z\x2efish
+SETUVAR _fisher_jorgebucaran_2F_fisher_files:/home/justanoobcoder/\x2econfig/fish/functions/fisher\x2efish\x1e/home/justanoobcoder/\x2econfig/fish/completions/fisher\x2efish
 SETUVAR _fisher_plugins:jorgebucaran/fisher\x1ejethrokuan/z\x1esimnalamburt/shellder\x1epeco/peco\x1ex\x2dmotemen/ghq
 SETUVAR fish_color_autosuggestion:a8a8a8
 SETUVAR fish_color_cancel:normal
