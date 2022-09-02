@@ -17,7 +17,9 @@ send_notification() {
     iconMuted="audio-volume-muted-symbolic.symbolic"
     if is_mute ; then
         dunstify -i $iconMuted -r 1 -u normal "mute"
+        eww update volume-muted=true
     else
+        eww update volume-muted=false
         volume=$(get_volume)
         # Make the bar with the special character ─ (it's not dash -)
         bar=$(seq --separator="─" 0 "$((volume / 5))" | sed 's/[0-9]//g')
