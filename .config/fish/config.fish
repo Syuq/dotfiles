@@ -2,8 +2,7 @@ source ~/.config/fish/functions/my_functions.fish
 
 if status is-login
     if test -z "$DISPLAY" -a "$XDG_VTNR" = 1
-        export PATH="$PATH:$HOME/.local/share/npm/bin:$(du "$HOME/.local/bin/" | cut -f2 | paste -sd ':')"
-        exec Hyprland
+        exec startx $XINITRC
     end
 end
 
