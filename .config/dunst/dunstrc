@@ -85,7 +85,7 @@
     idle_threshold = 120
 
     ### Text ###
-    font = Times New Roman 10
+    font = JetBrainsMono Nerd Font 10
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
@@ -281,7 +281,7 @@
     icon = ~/.config/dunst/normal.png
 
 [urgency_normal]
-    background = "#d08770"
+    background = "#81a1c1"
     foreground = "#2e3440"
     timeout = 5
     # Icon for notifications with normal urgency, uncomment to enable
